@@ -4,12 +4,24 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.SwerveGroup;
 
 public class Drive extends CommandBase {
+
+  //velocity values
+  double xV, yV, rV;
+
+  //slew rate limiters
+  SlewRateLimiter xFilter = new SlewRateLimiter(3);
+  SlewRateLimiter yFilter = new SlewRateLimiter(3);
+  SlewRateLimiter rFilter = new SlewRateLimiter(0);
+
+
   /** Creates a new Drive. */
   public Drive() {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -22,15 +34,14 @@ public class Drive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.driveFR.set(ControlMode.PercentOutput, 1d);
-    RobotContainer.driveFL.set(ControlMode.PercentOutput, -1d);
-    RobotContainer.driveBL.set(ControlMode.PercentOutput, -1d);
-    RobotContainer.driveBR.set(ControlMode.PercentOutput, 1d);
+    XboxController driveController = RobotContainer.xbox1;
+    //FIXME Get polar coordinates for xbox controller
+    xV = xFilter.calculate(driveController.getRawAxis(0));
+    yV = yFilter.calculate(driveController.getRawAxis(1));
+    rV = rFilter.calculate(driveController.getRawAxis(4));
 
-    RobotContainer.steerFR.set(ControlMode.PercentOutput, 0.05d);
-    RobotContainer.steerFL.set(ControlMode.PercentOutput, 0.05d);
-    RobotContainer.steerBL.set(ControlMode.PercentOutput, 0.05d);
-    RobotContainer.steerBR.set(ControlMode.PercentOutput, 0.05d);
+    SwerveGroup.Drive(xV, yV, rV);
+    
 
 
   }

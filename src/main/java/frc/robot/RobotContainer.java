@@ -13,7 +13,12 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.subsystems.BackLeftSwerve;
+import frc.robot.subsystems.BackRightSwerve;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.FrontLeftSwerve;
+import frc.robot.subsystems.FrontRightSwerve;
+import frc.robot.subsystems.SwerveGroup;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -35,9 +40,16 @@ public class RobotContainer {
 
   public static AHRS navx;
   
-  public static Encoder cFR, cFL, CBL, cBR;
+  public static Encoder cFR, cFL, cBL, cBR;
 
   public static Drive drive;
+
+  /*----- Swerve Modules -----*/
+  public static FrontLeftSwerve FL;
+  public static FrontRightSwerve FR;
+  public static BackLeftSwerve BL;
+  public static BackRightSwerve BR;
+
   
 
   
@@ -75,9 +87,11 @@ public class RobotContainer {
     steerBL = new TalonFX(6);
     steerBR = new TalonFX(8);
 
-
-
-
+    //Swerve Modules
+    FR = new FrontRightSwerve(driveFR, steerFR, cFR);
+    FL = new FrontLeftSwerve(driveFL, steerFL, cFL);
+    BL = new BackLeftSwerve(driveBL, steerBL, cBL);
+    BR = new BackRightSwerve(driveBR, steerBR, cBR);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -92,7 +106,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+
+  }
 
 
 

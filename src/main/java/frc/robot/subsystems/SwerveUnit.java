@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.Encoder;
@@ -18,6 +19,7 @@ public class SwerveUnit extends SubsystemBase {
     boolean steerInverted = false;
 
     double driveMotorSpeed, steerMotorSpeed;
+    double rawAngle;
 
 
 
@@ -35,12 +37,12 @@ public class SwerveUnit extends SubsystemBase {
     this.steerInverted = steerInverted;
   }
 
-  public void getMotorValues(double fv, double desiredAngle) { //fv is in meters/second, desiredAngle is in degrees
+  public void move(double fv, double desiredAngle) { //fv is in meters/second, desiredAngle is in degrees
     this.driveMotorSpeed = ((60 * fv)/SwerveConstants.WheelCircumferenceM) * SwerveConstants.SWERVE_GEAR_RATIO_DRIVE;
     if(driveInverted) {
       this.driveMotorSpeed = this.driveMotorSpeed * -1;
     }
-    this.steerMotorSpeed = ((60 * getClosestAngle(encoder.getDistance(), desiredAngle))/(360 * SwerveConstants.MODULE_TURN_TIME_SECONDS)) * SwerveConstants.SWERVE_GEAR_RATIO_STEER;
+    this.steerMotorSpeed = ((60 * getClosestAngle(rawAngle, desiredAngle))/(360 * SwerveConstants.MODULE_TURN_TIME_SECONDS)) * SwerveConstants.SWERVE_GEAR_RATIO_STEER;
   }
 
 
@@ -65,10 +67,17 @@ public class SwerveUnit extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    updateMotorSpeeds();
+    rawAngle = encoder.getDistance();
   }
 
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+  }
+
+  public void updateMotorSpeeds() {
+    driveMotor.set(ControlMode.Velocity, driveMotorSpeed * SwerveConstants.FalconSpeedConstant);
+    rotationMotor.set(ControlMode.Velocity, steerMotorSpeed * SwerveConstants.FalconSpeedConstant);
   }
 }

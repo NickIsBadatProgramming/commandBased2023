@@ -6,30 +6,35 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
+import edu.wpi.first.wpilibj.SerialPort;
 
 public class SwerveGroup extends SubsystemBase {
   /*----- Initialize Swerve Modules -----*/
-  SwerveUnit FR, FL, BL, BR;
+  static SwerveUnit FR;
+  static SwerveUnit FL;
+  static SwerveUnit BL;
+  static SwerveUnit BR;
   AHRS navx;
 
 
   /** Creates a new SwerveGroup. */
-  public SwerveGroup(SwerveUnit FR, SwerveUnit FL, SwerveUnit BL, SwerveUnit BR, AHRS navx) {
-    this.FR = FR;
-    this.FL = FL;
-    this.BL = BL;
-    this.BR = BR;
-    this.navx = navx;
+  public SwerveGroup() {
+    navx = new AHRS(SerialPort.Port.kMXP);
+
+    FR = RobotContainer.FR;
+    FL = RobotContainer.FL;
+    BL = RobotContainer.BL;
+    BR = RobotContainer.BR;
   }
 
-  public void Drive(double vx, double vy, double vr) {
+  public static void Drive(double vx, double vy, double vr) {
     Translation2d m_frontRight = new Translation2d(SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2); //Making 2D translations from the center of the robot to the swerve modules
     Translation2d m_frontLeft = new Translation2d(SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
     Translation2d m_backLeft = new Translation2d(-SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
@@ -48,9 +53,10 @@ public class SwerveGroup extends SubsystemBase {
     SwerveModuleState backLeft = moduleStates[2];
     SwerveModuleState backRight = moduleStates[3];
 
-    
-
-    
+    FL.move(frontLeft.speedMetersPerSecond, frontLeft.angle.getDegrees());
+    FR.move(frontRight.speedMetersPerSecond, frontRight.angle.getDegrees());
+    BL.move(backLeft.speedMetersPerSecond, backLeft.angle.getDegrees());
+    BR.move(backRight.speedMetersPerSecond, backRight.angle.getDegrees());
   }
 
   @Override
