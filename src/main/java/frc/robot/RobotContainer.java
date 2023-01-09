@@ -50,6 +50,8 @@ public class RobotContainer {
   public static BackLeftSwerve BL;
   public static BackRightSwerve BR;
 
+  public static SwerveGroup swerve;
+
   
 
   
@@ -66,8 +68,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    drive = new Drive();
-
     /*----- Inputs -----*/
     xbox1 = new XboxController(0);
     //define all buttons on the XboxController here
@@ -92,6 +92,8 @@ public class RobotContainer {
     FL = new FrontLeftSwerve(driveFL, steerFL, cFL);
     BL = new BackLeftSwerve(driveBL, steerBL, cBL);
     BR = new BackRightSwerve(driveBR, steerBR, cBR);
+
+    swerve = new SwerveGroup();
 
     // Configure the button bindings
     configureButtonBindings();

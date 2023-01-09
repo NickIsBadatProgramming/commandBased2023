@@ -9,7 +9,6 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.SwerveGroup;
 
 public class Drive extends CommandBase {
 
@@ -25,6 +24,7 @@ public class Drive extends CommandBase {
   /** Creates a new Drive. */
   public Drive() {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.swerve);
   }
 
   // Called when the command is initially scheduled.
@@ -35,15 +35,12 @@ public class Drive extends CommandBase {
   @Override
   public void execute() {
     XboxController driveController = RobotContainer.xbox1;
-    //FIXME Get polar coordinates for xbox controller
+   
     xV = xFilter.calculate(driveController.getRawAxis(0));
     yV = yFilter.calculate(driveController.getRawAxis(1));
     rV = rFilter.calculate(driveController.getRawAxis(4));
 
-    SwerveGroup.Drive(xV, yV, rV);
-    
-
-
+    RobotContainer.swerve.Drive(xV, yV, rV);
   }
 
   // Called once the command ends or is interrupted.

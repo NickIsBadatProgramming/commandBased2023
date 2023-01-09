@@ -34,7 +34,7 @@ public class SwerveGroup extends SubsystemBase {
     BR = RobotContainer.BR;
   }
 
-  public static void Drive(double vx, double vy, double vr) {
+  public void Drive(double vx, double vy, double vr) {
     Translation2d m_frontRight = new Translation2d(SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2); //Making 2D translations from the center of the robot to the swerve modules
     Translation2d m_frontLeft = new Translation2d(SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
     Translation2d m_backLeft = new Translation2d(-SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
