@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.SwerveConstants;
@@ -29,7 +30,7 @@ public class SwerveUnit extends SubsystemBase {
 
 
   /** Creates a new SwerveUnit. */
-  public SwerveUnit(TalonFX rotationMotor, TalonFX driveMotor, Encoder encoder, boolean driveInverted, boolean steerInverted) {
+  public SwerveUnit(TalonFX driveMotor, TalonFX rotationMotor, Encoder encoder, boolean driveInverted, boolean steerInverted) {
     this.rotationMotor = rotationMotor;
     this.driveMotor = driveMotor;
     this.encoder = encoder;
@@ -42,7 +43,7 @@ public class SwerveUnit extends SubsystemBase {
     if(driveInverted) {
       this.driveMotorSpeed = this.driveMotorSpeed * -1;
     }
-    this.steerMotorSpeed = ((60 * getClosestAngle(rawAngle, desiredAngle))/(360 * SwerveConstants.MODULE_TURN_TIME_SECONDS)) * SwerveConstants.SWERVE_GEAR_RATIO_STEER;
+    this.steerMotorSpeed = ((60 * getClosestAngle(ticksToAngle(encoder.getDistance()), desiredAngle))/(360 * SwerveConstants.MODULE_TURN_TIME_SECONDS)) * SwerveConstants.SWERVE_GEAR_RATIO_STEER;
   }
 
 
@@ -67,8 +68,6 @@ public class SwerveUnit extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    updateMotorSpeeds();
-    rawAngle = encoder.getDistance();
   }
 
   @Override
@@ -76,8 +75,17 @@ public class SwerveUnit extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
+  public double ticksToAngle(double ticks) {
+    double returnDouble = ((360d/1024d) * (ticks % 1024));
+    if (ticks < 0) {
+      ticks += 360;
+    }
+    return returnDouble;
+  }
+
   public void updateMotorSpeeds() {
-    driveMotor.set(ControlMode.Velocity, driveMotorSpeed * SwerveConstants.FalconSpeedConstant);
-    rotationMotor.set(ControlMode.Velocity, steerMotorSpeed * SwerveConstants.FalconSpeedConstant);
+    driveMotor.set(ControlMode.PercentOutput, driveMotorSpeed/5000);
+    rotationMotor.set(ControlMode.PercentOutput, steerMotorSpeed/5000);
+    SmartDashboard.putNumber("steer motor speed", steerMotorSpeed);
   }
 }

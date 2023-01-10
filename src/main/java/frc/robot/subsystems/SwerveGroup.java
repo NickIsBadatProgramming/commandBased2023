@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveGroup extends SubsystemBase {
   /*----- Initialize Swerve Modules -----*/
@@ -57,6 +58,8 @@ public class SwerveGroup extends SubsystemBase {
     FR.move(frontRight.speedMetersPerSecond, frontRight.angle.getDegrees());
     BL.move(backLeft.speedMetersPerSecond, backLeft.angle.getDegrees());
     BR.move(backRight.speedMetersPerSecond, backRight.angle.getDegrees());
+
+    SmartDashboard.putNumber("Front left angle", frontLeft.angle.getDegrees());
   }
 
   @Override

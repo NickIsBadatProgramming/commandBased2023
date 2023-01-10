@@ -56,6 +56,8 @@ public class RobotContainer {
 
   
 
+  
+
 
 
   // The robot's subsystems and commands are defined here...
@@ -88,12 +90,23 @@ public class RobotContainer {
     steerBR = new TalonFX(8);
 
     //Swerve Modules
+
+    cFR = new Encoder(6, 7);
+    cFL = new Encoder(2, 3);
+    cBL = new Encoder(0, 1);
+    cBR = new Encoder(5, 4);
+    cBR.setReverseDirection(true);
+
+
     FR = new FrontRightSwerve(driveFR, steerFR, cFR);
     FL = new FrontLeftSwerve(driveFL, steerFL, cFL);
     BL = new BackLeftSwerve(driveBL, steerBL, cBL);
     BR = new BackRightSwerve(driveBR, steerBR, cBR);
 
+
+
     swerve = new SwerveGroup();
+    drive = new Drive();
 
     // Configure the button bindings
     configureButtonBindings();

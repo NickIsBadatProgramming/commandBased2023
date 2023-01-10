@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Encoder;
 public class BackLeftSwerve extends SwerveUnit {
   /** Creates a new FrontLeftSwerve. */
   public BackLeftSwerve(TalonFX rotationMotor, TalonFX driveMotor, Encoder encoder) {
-    super(rotationMotor, driveMotor, encoder, true, false);
+    super(rotationMotor, driveMotor, encoder, false, false);
   }
 
   @Override

@@ -16,13 +16,13 @@ public final class Constants {
     public static final class SwerveConstants {
         public static final double SWERVE_GEAR_RATIO_DRIVE = 6.75; // Gear ratio of swerve drive
         public static final double SWERVE_GEAR_RATIO_STEER = 6.75;
-        public static final float MODULE_TURN_TIME_SECONDS = 1; //how long it takes for the modules to turn the correct amount
+        public static final double MODULE_TURN_TIME_SECONDS = 0.4; //how long it takes for the modules to turn 
         public static final int MOTOR_MAX_RPM = 3000;
 
         public static final double WheelbaseM = 0.596955; //Dimensions for swerve calculation - in meters
         public static final double TrackwidthM = 0.596955;
         public static final double WheelCircumferenceM = 0.1;
 
-        public static final double FalconSpeedConstant = 2048/60000; //Converting m/s to steps/millisecond
+        public static final double FalconSpeedConstant = 600/2048; //Converting m/s to steps/millisecond
     }
 }
