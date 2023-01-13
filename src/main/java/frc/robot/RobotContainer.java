@@ -4,13 +4,16 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.BackLeftSwerve;
@@ -40,7 +43,7 @@ public class RobotContainer {
 
   public static AHRS navx;
   
-  public static Encoder cFR, cFL, cBL, cBR;
+  public static CANCoder cFR, cFL, cBL, cBR;
 
   public static Drive drive;
 
@@ -51,6 +54,7 @@ public class RobotContainer {
   public static BackRightSwerve BR;
 
   public static SwerveGroup swerve;
+
 
   
 
@@ -91,11 +95,10 @@ public class RobotContainer {
 
     //Swerve Modules
 
-    cFR = new Encoder(6, 7);
-    cFL = new Encoder(2, 3);
-    cBL = new Encoder(0, 1);
-    cBR = new Encoder(5, 4);
-    cBR.setReverseDirection(true);
+    cFR = new CANCoder(12);
+    cFL = new CANCoder(9);
+    cBL = new CANCoder(10);
+    cBR = new CANCoder(11);
 
 
     FR = new FrontRightSwerve(driveFR, steerFR, cFR);
@@ -107,6 +110,26 @@ public class RobotContainer {
 
     swerve = new SwerveGroup();
     drive = new Drive();
+
+    //Configure CAN Settings
+    cFR.setStatusFramePeriod(CANCoderStatusFrame.SensorData, SwerveConstants.RefreshRate);
+    cFL.setStatusFramePeriod(CANCoderStatusFrame.SensorData, SwerveConstants.RefreshRate);
+    cBL.setStatusFramePeriod(CANCoderStatusFrame.SensorData, SwerveConstants.RefreshRate);
+    cBR.setStatusFramePeriod(CANCoderStatusFrame.SensorData, SwerveConstants.RefreshRate);
+
+    driveFR.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,SwerveConstants.RefreshRate);
+    driveFL.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,SwerveConstants.RefreshRate);
+    driveBL.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,SwerveConstants.RefreshRate);
+    driveBR.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,SwerveConstants.RefreshRate);
+
+    steerFR.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,SwerveConstants.RefreshRate);
+    steerFL.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,SwerveConstants.RefreshRate);
+    steerBL.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,SwerveConstants.RefreshRate);
+    steerBR.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,SwerveConstants.RefreshRate);
+    
+    
+    
+
 
     // Configure the button bindings
     configureButtonBindings();

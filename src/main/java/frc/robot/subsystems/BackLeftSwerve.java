@@ -5,12 +5,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-
-import edu.wpi.first.wpilibj.Encoder;
+import com.ctre.phoenix.sensors.CANCoder;
 
 public class BackLeftSwerve extends SwerveUnit {
   /** Creates a new FrontLeftSwerve. */
-  public BackLeftSwerve(TalonFX rotationMotor, TalonFX driveMotor, Encoder encoder) {
+  public BackLeftSwerve(TalonFX rotationMotor, TalonFX driveMotor, CANCoder encoder) {
     super(rotationMotor, driveMotor, encoder, false, false);
   }
 

@@ -24,5 +24,16 @@ public final class Constants {
         public static final double WheelCircumferenceM = 0.1;
 
         public static final double FalconSpeedConstant = 600/2048; //Converting m/s to steps/millisecond
+
+        public static final double MaximumModuleAcceleration = 2; //m/s/s
+        
+        public static final double MaxModuleTurnSpeed = 0.2; //speed of the motor 180 degrees from the target angle
+        public static final double SpeedMultiplier = 0.5;
+
+        public static final int RefreshRate = 10;
+
+    }
+    public static final class ControllerConstants {
+        public static final double xboxDeadzone = 0.2;
     }
 }

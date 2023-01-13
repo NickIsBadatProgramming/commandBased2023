@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.ControllerConstants;
 
 public class Drive extends CommandBase {
 
@@ -35,17 +36,26 @@ public class Drive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    
+    
     XboxController driveController = RobotContainer.xbox1;
    
-    xV = xFilter.calculate(driveController.getRawAxis(0));
-    yV = yFilter.calculate(driveController.getRawAxis(1));
-    rV = rFilter.calculate(driveController.getRawAxis(4));
+    //xV = xFilter.calculate(driveController.getRawAxis(0));
+   // yV = yFilter.calculate(driveController.getRawAxis(1));
+   // rV = rFilter.calculate(driveController.getRawAxis(4));
+
+    xV = driveController.getRawAxis(0);
+    if (Math.abs(xV) < ControllerConstants.xboxDeadzone) xV = 0;
+    yV = -driveController.getRawAxis(1);
+    if (Math.abs(yV) < ControllerConstants.xboxDeadzone) yV = 0;
+    rV = driveController.getRawAxis(4);
+    if (Math.abs(rV) < ControllerConstants.xboxDeadzone) rV = 0;
 
     SmartDashboard.putNumber("X velocity", xV);
     SmartDashboard.putNumber("Y Velocity", yV);
     SmartDashboard.putNumber("R Velocity", rV);
 
-    RobotContainer.swerve.Drive(xV, yV, rV);
+    RobotContainer.swerve.CustomDrive(xV, yV, rV);
 
     RobotContainer.FL.updateMotorSpeeds();
     RobotContainer.FR.updateMotorSpeeds();
