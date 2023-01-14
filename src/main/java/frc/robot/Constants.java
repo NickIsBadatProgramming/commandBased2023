@@ -28,9 +28,18 @@ public final class Constants {
         public static final double MaximumModuleAcceleration = 2; //m/s/s
         
         public static final double MaxModuleTurnSpeed = 0.2; //speed of the motor 180 degrees from the target angle
-        public static final double SpeedMultiplier = 0.5;
+        public static final double SpeedMultiplier = 0.3;
 
-        public static final int RefreshRate = 10;
+        public static final int RefreshRateEncoders = 50;
+        public static final int RefreshRateMotors = 50;
+
+
+        //Swerve Zeroes
+
+        public static final double FR_Zero = 187.2;
+        public static final double FL_Zero = 210.4;
+        public static final double BL_Zero = 352.4;
+        public static final double BR_Zero = 164.1;
 
     }
     public static final class ControllerConstants {

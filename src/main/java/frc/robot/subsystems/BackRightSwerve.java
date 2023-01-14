@@ -7,14 +7,19 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.SwerveConstants;
+
 public class BackRightSwerve extends SwerveUnit {
   /** Creates a new FrontLeftSwerve. */
   public BackRightSwerve(TalonFX rotationMotor, TalonFX driveMotor, CANCoder encoder) {
-    super(rotationMotor, driveMotor, encoder, false, false);
+    super(rotationMotor, driveMotor, encoder, false, false, SwerveConstants.BR_Zero);
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Back Right Raw Encoder Value", this.encoder.getAbsolutePosition());
+    getRawAngle();
+    SmartDashboard.putNumber("Back Right Encoder Zeroed Value", this.rawAngle);
   }
 }

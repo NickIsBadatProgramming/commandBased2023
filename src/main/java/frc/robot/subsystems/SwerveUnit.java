@@ -7,9 +7,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
-
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.SwerveConstants;
@@ -21,10 +18,9 @@ public class SwerveUnit extends SubsystemBase {
     boolean steerInverted = false;
 
     double driveMotorSpeed, steerMotorSpeed;
-    double rawAngle;
+    double rawAngle, desiredAngle, difference;
 
-    static double maxDesired = 0;
-    static double minDesired = 0;
+    double zeroOffset;
 
 
 
@@ -34,31 +30,28 @@ public class SwerveUnit extends SubsystemBase {
 
 
   /** Creates a new SwerveUnit. */
-  public SwerveUnit(TalonFX driveMotor, TalonFX rotationMotor, CANCoder encoder, boolean driveInverted, boolean steerInverted) {
+  public SwerveUnit(TalonFX driveMotor, TalonFX rotationMotor, CANCoder encoder, boolean driveInverted, boolean steerInverted, double zeroOffset) {
     this.rotationMotor = rotationMotor;
     this.driveMotor = driveMotor;
     this.encoder = encoder;
     this.driveInverted = driveInverted;
     this.steerInverted = steerInverted;
+    this.zeroOffset = zeroOffset;
   }
 
   public void move(double fv, double desiredAngle) { //fv is in meters/second, desiredAngle is in degrees
 
+    if(desiredAngle < 0) {
+      desiredAngle +=360;
+    }
+
     this.driveMotorSpeed = fv * SwerveConstants.SpeedMultiplier; //((60 * fv)/SwerveConstants.WheelCircumferenceM) //* SwerveConstants.SWERVE_GEAR_RATIO_DRIVE;
-    //this.steerMotorSpeed = ((60 * getClosestAngle(ticksToAngle(encoder.getDistance()), desiredAngle))/(360 * SwerveConstants.MODULE_TURN_TIME_SECONDS)) * SwerveConstants.SWERVE_GEAR_RATIO_STEER;
-    this.steerMotorSpeed = steerSpeed(encoder.getAbsolutePosition(), desiredAngle);
-
-    //Diagnostic stuff
-
-    if (desiredAngle > maxDesired) {
-      SwerveUnit.maxDesired = desiredAngle;
+    if(this.driveInverted) {
+      driveMotorSpeed *= -1;
     }
-    if (desiredAngle < minDesired) {
-      SwerveUnit.minDesired = desiredAngle;
-    }
-    SmartDashboard.putNumber("desired angle", desiredAngle);
-    SmartDashboard.putNumber("Max Desired", maxDesired);
-    SmartDashboard.putNumber("Min Desired", minDesired);
+    this.steerMotorSpeed = steerSpeed(getRawAngle(), desiredAngle);
+
+    this.desiredAngle = desiredAngle;
   }
 
 
@@ -87,47 +80,40 @@ public class SwerveUnit extends SubsystemBase {
 
     //return SwerveConstants.MaxModuleTurnSpeed * ((currentAngle-desiredAngle)/180);
 
-    double difference = desiredAngle-currentAngle;
+    double difference = desiredAngle - currentAngle;
     if(difference > 180) {
       difference -= 360;
     }
-
     if(difference < -180) {
       difference += 360;
     }
 
+    this.difference = difference;
+
     if(Math.abs(difference) <= 4) {
       return 0;
     } 
-    if(Math.abs(desiredAngle-currentAngle) <= 10) {
-      return (SwerveConstants.MaxModuleTurnSpeed * ((difference)/Math.abs(difference)))/2;
+    if(Math.abs(difference) <= 40) {
+      return (SwerveConstants.MaxModuleTurnSpeed * ((difference)/Math.abs(difference)))/3;
     } 
     
     return SwerveConstants.MaxModuleTurnSpeed * ((difference)/Math.abs(difference));
   }
 
+  public double getRawAngle() {
+    this.rawAngle = this.encoder.getAbsolutePosition() - this.zeroOffset;
+    if(this.rawAngle < 0) {
+      this.rawAngle += 360;
+    }
+    return this.rawAngle;
+  }
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-  }
-
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
-
-  public double ticksToAngle(double ticks) {
-    double returnDouble = ((360d/1024d) * (ticks % 1024));
-    if (returnDouble < 0) {
-      returnDouble += 360;
-    }
-    return returnDouble;
   }
 
   public void updateMotorSpeeds() {
-    //driveMotor.set(ControlMode.PercentOutput, driveMotorSpeed);
-    //rotationMotor.set(ControlMode.PercentOutput, steerMotorSpeed);
-    SmartDashboard.putNumber("steer motor speed", steerMotorSpeed);
-    SmartDashboard.putNumber("Drive Motor Speed", driveMotorSpeed);
+    this.driveMotor.set(ControlMode.PercentOutput, this.driveMotorSpeed);
+    this.rotationMotor.set(ControlMode.PercentOutput, this.steerMotorSpeed);
   }
 }

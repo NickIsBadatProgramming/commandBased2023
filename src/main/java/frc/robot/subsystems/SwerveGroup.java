@@ -31,9 +31,6 @@ public class SwerveGroup extends SubsystemBase {
   static CANCoder cBR;
   AHRS navx;
 
-  static double maxValue = 0;
-  static double minValue = 0;
-
 
   /** Creates a new SwerveGroup. */
   public SwerveGroup() {
@@ -58,33 +55,24 @@ public class SwerveGroup extends SubsystemBase {
     Translation2d m_backLeft = new Translation2d(-SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
     Translation2d m_backRight = new Translation2d(-SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2);
 
-    SwerveDriveKinematics m_Kinematics = new SwerveDriveKinematics(m_frontLeft, m_frontRight, m_backLeft, m_backRight);
+    SwerveDriveKinematics m_Kinematics = new SwerveDriveKinematics(m_frontRight, m_frontLeft, m_backLeft, m_backRight);
 
     ChassisSpeeds speeds;
 
  
-    speeds = new ChassisSpeeds(vx, vy, vr); 
+    speeds = new ChassisSpeeds(vy, vx, vr); 
 
     SwerveModuleState[] moduleStates = m_Kinematics.toSwerveModuleStates(speeds);
 
-    SwerveModuleState frontLeft = moduleStates[0];
-    SwerveModuleState frontLeftOptimized = SwerveModuleState.optimize(frontLeft, new Rotation2d(cFL.getAbsolutePosition()));
-
-    SwerveModuleState frontRight = moduleStates[1];
-    SwerveModuleState frontRightOptimized = SwerveModuleState.optimize(frontRight, new Rotation2d(cFR.getAbsolutePosition()));
-
+    SwerveModuleState frontRight = moduleStates[0];
+    SwerveModuleState frontLeft = moduleStates[1];
     SwerveModuleState backLeft = moduleStates[2];
-    SwerveModuleState backLeftOptimized = SwerveModuleState.optimize(backLeft, new Rotation2d(cBL.getAbsolutePosition()));
-
     SwerveModuleState backRight = moduleStates[3];
-    SwerveModuleState backRightOptimized = SwerveModuleState.optimize(backRight, new Rotation2d(cBR.getAbsolutePosition()));
 
-    FL.move(frontLeftOptimized.speedMetersPerSecond, frontLeftOptimized.angle.getDegrees());
-    FR.move(frontRightOptimized.speedMetersPerSecond, frontRightOptimized.angle.getDegrees());
-    BL.move(backLeftOptimized.speedMetersPerSecond, backLeftOptimized.angle.getDegrees());
-    BR.move(backRightOptimized.speedMetersPerSecond, backRightOptimized.angle.getDegrees());
-
-    SmartDashboard.putNumber("Front left angle from swerve calculation", frontLeftOptimized.angle.getDegrees());
+    FL.move(frontLeft.speedMetersPerSecond, frontLeft.angle.getDegrees());
+    FR.move(frontRight.speedMetersPerSecond, frontRight.angle.getDegrees());
+    BL.move(backLeft.speedMetersPerSecond, backLeft.angle.getDegrees());
+    BR.move(backRight.speedMetersPerSecond, backRight.angle.getDegrees());
 
   }
 
@@ -93,10 +81,20 @@ public class SwerveGroup extends SubsystemBase {
     //Find angle of the two velocities
     //SOH CAH TOA
 
-    double angle = Math.atan(y/x);
-    if(angle < 0) {
-      angle += 360; //convert negative angle to positive angle
+    double angle = Math.toDegrees(Math.atan(y/x)) -90;
+
+    if (x < 0) {
+      angle += 180;
     }
+
+    if (x >= 0 && y < 0) {
+      angle += 360;
+    }
+
+    if(angle < 0) {
+      angle += 360;
+    }
+
 
     double velocity = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 
@@ -104,28 +102,13 @@ public class SwerveGroup extends SubsystemBase {
     FR.move(velocity, angle);
     BR.move(velocity, angle);
     BL.move(velocity, angle);
-  }
 
-  public double ticksToAngle(double ticks) {
-    double returnDouble = ((360d/1024d) * (ticks % 1024));
-    if (ticks < 0) {
-      ticks += 360;
-    }
-
-    if (returnDouble > maxValue) {
-      SwerveGroup.maxValue = returnDouble;
-    }
-    if (returnDouble < minValue) {
-      SwerveGroup.minValue = returnDouble;
-    }
-    return returnDouble;
+    SmartDashboard.putNumber("Calculated Controller Angle", angle);
   }
 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Max Angle", maxValue);
-    SmartDashboard.putNumber("Min Angle", minValue);
   }
 }

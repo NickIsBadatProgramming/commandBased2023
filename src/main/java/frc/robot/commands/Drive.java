@@ -44,23 +44,34 @@ public class Drive extends CommandBase {
    // yV = yFilter.calculate(driveController.getRawAxis(1));
    // rV = rFilter.calculate(driveController.getRawAxis(4));
 
-    xV = driveController.getRawAxis(0);
+    xV = -driveController.getRawAxis(0);
     if (Math.abs(xV) < ControllerConstants.xboxDeadzone) xV = 0;
     yV = -driveController.getRawAxis(1);
     if (Math.abs(yV) < ControllerConstants.xboxDeadzone) yV = 0;
-    rV = driveController.getRawAxis(4);
+    rV = -driveController.getRawAxis(4);
     if (Math.abs(rV) < ControllerConstants.xboxDeadzone) rV = 0;
 
     SmartDashboard.putNumber("X velocity", xV);
     SmartDashboard.putNumber("Y Velocity", yV);
     SmartDashboard.putNumber("R Velocity", rV);
 
-    RobotContainer.swerve.CustomDrive(xV, yV, rV);
+    if(!(xV == 0 && yV ==0 && rV == 0)) {
 
+      RobotContainer.swerve.Drive(xV, yV, rV);
+
+
+    } else {
+      RobotContainer.FL.move(0, RobotContainer.FL.getRawAngle());
+      RobotContainer.FR.move(0, RobotContainer.FR.getRawAngle());
+      RobotContainer.BL.move(0, RobotContainer.BL.getRawAngle());
+      RobotContainer.BR.move(0, RobotContainer.BR.getRawAngle());
+
+    }
     RobotContainer.FL.updateMotorSpeeds();
     RobotContainer.FR.updateMotorSpeeds();
     RobotContainer.BL.updateMotorSpeeds();
     RobotContainer.BR.updateMotorSpeeds();
+
   }
 
   // Called once the command ends or is interrupted.
