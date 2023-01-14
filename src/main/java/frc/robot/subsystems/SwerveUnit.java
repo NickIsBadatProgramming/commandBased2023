@@ -89,7 +89,13 @@ public class SwerveUnit extends SubsystemBase {
     }
 
     this.difference = difference;
+    if(Math.abs(difference) < 6) {
+      return 0;
+    }
 
+    return (Math.abs(difference)/difference) * SwerveConstants.AdditionalTurnSpeed * (Math.pow(Math.abs(difference),SwerveConstants.TurnSpeedLinearity)/Math.pow(180,SwerveConstants.TurnSpeedLinearity)) + SwerveConstants.MinModuleTurnSpeed; //Choose your power
+    /* 
+    //Old steering code
     if(Math.abs(difference) <= 4) {
       return 0;
     } 
@@ -98,6 +104,8 @@ public class SwerveUnit extends SubsystemBase {
     } 
     
     return SwerveConstants.MaxModuleTurnSpeed * ((difference)/Math.abs(difference));
+
+    */
   }
 
   public double getRawAngle() {
@@ -113,7 +121,7 @@ public class SwerveUnit extends SubsystemBase {
   }
 
   public void updateMotorSpeeds() {
-    this.driveMotor.set(ControlMode.PercentOutput, this.driveMotorSpeed);
+    //this.driveMotor.set(ControlMode.PercentOutput, this.driveMotorSpeed);
     this.rotationMotor.set(ControlMode.PercentOutput, this.steerMotorSpeed);
   }
 }

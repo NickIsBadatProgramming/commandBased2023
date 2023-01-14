@@ -130,10 +130,16 @@ public class RobotContainer {
 
 
 
-    
-    
-    
+    //Configure neutral modes (When the motors aren't being powered);
+    steerFR.setNeutralMode(NeutralMode.Brake);
+    steerFL.setNeutralMode(NeutralMode.Brake);
+    steerBL.setNeutralMode(NeutralMode.Brake);
+    steerBR.setNeutralMode(NeutralMode.Brake);
 
+    driveFR.setNeutralMode(NeutralMode.Brake);
+    driveFL.setNeutralMode(NeutralMode.Brake);
+    driveBL.setNeutralMode(NeutralMode.Brake);
+    driveBR.setNeutralMode(NeutralMode.Brake);
 
     // Configure the button bindings
     configureButtonBindings();
