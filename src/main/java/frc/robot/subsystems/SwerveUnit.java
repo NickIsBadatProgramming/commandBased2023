@@ -45,7 +45,17 @@ public class SwerveUnit extends SubsystemBase {
       desiredAngle +=360;
     }
 
-    this.driveMotorSpeed = fv * SwerveConstants.SpeedMultiplier; //((60 * fv)/SwerveConstants.WheelCircumferenceM) //* SwerveConstants.SWERVE_GEAR_RATIO_DRIVE;
+    difference = desiredAngle - getRawAngle();
+
+    if(difference < 0) {
+      difference = 0; 
+    }
+    if(difference > 90) {
+      difference = 90;
+    }
+
+    this.driveMotorSpeed = fv * SwerveConstants.SpeedMultiplier * ((90 - Math.abs(difference))/90); //((60 * fv)/SwerveConstants.WheelCircumferenceM) //* SwerveConstants.SWERVE_GEAR_RATIO_DRIVE;
+
     if(this.driveInverted) {
       driveMotorSpeed *= -1;
     }
@@ -54,31 +64,10 @@ public class SwerveUnit extends SubsystemBase {
     this.desiredAngle = desiredAngle;
   }
 
-
-  /*public double getClosestAngle(double currentAngle, double desiredAngle) {
-    double difference;
-    if(!driveInverted) {
-        difference = desiredAngle - currentAngle;
-        if(Math.abs(difference) >= 180) {
-          difference = 360 + difference;
-          this.driveInverted = !this.driveInverted;
-        }
-      } else {
-        difference = desiredAngle - currentAngle;
-        if(Math.abs(difference) >= 180) {
-          difference = difference -360;
-          this.driveInverted = !this.driveInverted;
-        }
-    }
-    return difference;
-  } */
-
   public double steerSpeed(double currentAngle, double desiredAngle) {
     //at 0 degrees from the angle we want he rotation speed to be 0
     // at 180 degrees we have a constant in constants for our maximum speed
     //these two points can make a linear graph
-
-    //return SwerveConstants.MaxModuleTurnSpeed * ((currentAngle-desiredAngle)/180);
 
     double difference = desiredAngle - currentAngle;
     if(difference > 180) {
@@ -93,19 +82,8 @@ public class SwerveUnit extends SubsystemBase {
       return 0;
     }
 
-    return SwerveConstants.AdditionalTurnSpeed * (difference/180) + (SwerveConstants.MinModuleTurnSpeed * (difference/Math.abs(difference))); //Choose your power
-    /* 
-    //Old steering code
-    if(Math.abs(difference) <= 4) {
-      return 0;
-    } 
-    if(Math.abs(difference) <= 40) {
-      return (SwerveConstants.MaxModuleTurnSpeed * ((difference)/Math.abs(difference)))/3;
-    } 
-    
-    return SwerveConstants.MaxModuleTurnSpeed * ((difference)/Math.abs(difference));
+    return SwerveConstants.AdditionalTurnSpeed * (difference/180) + (SwerveConstants.MinModuleTurnSpeed * (difference/Math.abs(difference)));
 
-    */
   }
 
   public double getRawAngle() {

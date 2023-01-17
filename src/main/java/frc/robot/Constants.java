@@ -23,16 +23,11 @@ public final class Constants {
         public static final double TrackwidthM = 0.596955;
         public static final double WheelCircumferenceM = 0.1;
 
-        public static final double FalconSpeedConstant = 600/2048; //Converting m/s to steps/millisecond
-
-        public static final double MaximumModuleAcceleration = 2; //m/s/s
-
-
+        public static final double FalconSpeedConstant = 600/2048; //Converting m/s to steps/millisecond, not currently used
         
-        public static final double AdditionalTurnSpeed = 0.23; //additional speed of the motor 180 degrees from the target angle
+        public static final double AdditionalTurnSpeed = 0.28; //additional speed of the motor 180 degrees from the target angle
         public static final double MinModuleTurnSpeed = 0.07;
-        public static final double TurnSpeedLinearity = 1; //To what power will the calculation be (higher = smaller at smaller differences) Linear = 1, Quadratic = 2
-        public static final double SpeedMultiplier = 0.3;
+        public static final double SpeedMultiplier = 0.3; //Forward Speed
 
         public static final int RefreshRateEncoders = 50;
         public static final int RefreshRateMotors = 50;

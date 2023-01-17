@@ -35,7 +35,7 @@ public class SwerveGroup extends SubsystemBase {
   /** Creates a new SwerveGroup. */
   public SwerveGroup() {
     navx = new AHRS(SerialPort.Port.kMXP);
-
+    //Grab everything where it was initialized in RobotContainer
     FR = RobotContainer.FR;
     FL = RobotContainer.FL;
     BL = RobotContainer.BL;
@@ -79,7 +79,7 @@ public class SwerveGroup extends SubsystemBase {
 
   }
 
-  public AHRS getNavX() {
+  public AHRS getNavX() { //for commands 
     return this.navx;
   }
 
