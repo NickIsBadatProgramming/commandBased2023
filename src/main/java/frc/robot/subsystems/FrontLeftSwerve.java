@@ -21,14 +21,5 @@ public class FrontLeftSwerve extends SwerveUnit {
     SmartDashboard.putNumber("Front Left Raw Encoder Value", this.encoder.getAbsolutePosition());
     getRawAngle();
     SmartDashboard.putNumber("Front Left Encoder Zeroed Value", this.rawAngle);
-
-
-    //Temp Stuff
-    //FIXME remove when done
-
-    SmartDashboard.putNumber("Front Left Drive Velocity", this.driveMotorSpeed);
-    SmartDashboard.putNumber("Front Left Steer Velocity", this.steerMotorSpeed);
-    SmartDashboard.putNumber("Desired Angle", this.desiredAngle);
-    SmartDashboard.putNumber("Difference", this.difference);
   }
 }

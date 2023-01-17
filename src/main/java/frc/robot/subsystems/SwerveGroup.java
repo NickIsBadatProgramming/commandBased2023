@@ -57,23 +57,30 @@ public class SwerveGroup extends SubsystemBase {
 
     SwerveDriveKinematics m_Kinematics = new SwerveDriveKinematics(m_frontRight, m_frontLeft, m_backLeft, m_backRight);
 
-    ChassisSpeeds speeds;
-
- 
-    speeds = new ChassisSpeeds(vy, vx, vr); 
+    ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(vy, vx, vr, Rotation2d.fromDegrees(-navx.getYaw()));
 
     SwerveModuleState[] moduleStates = m_Kinematics.toSwerveModuleStates(speeds);
 
     SwerveModuleState frontRight = moduleStates[0];
+    SwerveModuleState frontRightOptimized = SwerveModuleState.optimize(frontRight, Rotation2d.fromDegrees(FR.getRawAngle()));
     SwerveModuleState frontLeft = moduleStates[1];
+    SwerveModuleState frontLeftOptimized = SwerveModuleState.optimize(frontLeft, Rotation2d.fromDegrees(FL.getRawAngle()));
     SwerveModuleState backLeft = moduleStates[2];
+    SwerveModuleState backLeftOptimized = SwerveModuleState.optimize(backLeft, Rotation2d.fromDegrees(BL.getRawAngle()));
     SwerveModuleState backRight = moduleStates[3];
+    SwerveModuleState backRightOptimized = SwerveModuleState.optimize(backRight, Rotation2d.fromDegrees(BR.getRawAngle()));
 
-    FL.move(frontLeft.speedMetersPerSecond, frontLeft.angle.getDegrees());
-    FR.move(frontRight.speedMetersPerSecond, frontRight.angle.getDegrees());
-    BL.move(backLeft.speedMetersPerSecond, backLeft.angle.getDegrees());
-    BR.move(backRight.speedMetersPerSecond, backRight.angle.getDegrees());
+    FL.move(frontLeftOptimized.speedMetersPerSecond, frontLeftOptimized.angle.getDegrees());
+    FR.move(frontRightOptimized.speedMetersPerSecond, frontRightOptimized.angle.getDegrees());
+    BL.move(backLeftOptimized.speedMetersPerSecond, backLeftOptimized.angle.getDegrees());
+    BR.move(backRightOptimized.speedMetersPerSecond, backRightOptimized.angle.getDegrees());
 
+    SmartDashboard.putNumber("NavX Angle", -navx.getYaw());
+
+  }
+
+  public AHRS getNavX() {
+    return this.navx;
   }
 
 
@@ -109,6 +116,5 @@ public class SwerveGroup extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
   }
 }

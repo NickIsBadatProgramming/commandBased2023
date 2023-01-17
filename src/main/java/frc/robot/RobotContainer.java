@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.ResetFeild;
 import frc.robot.subsystems.BackLeftSwerve;
 import frc.robot.subsystems.BackRightSwerve;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -24,6 +25,7 @@ import frc.robot.subsystems.FrontLeftSwerve;
 import frc.robot.subsystems.FrontRightSwerve;
 import frc.robot.subsystems.SwerveGroup;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -36,6 +38,7 @@ public class RobotContainer {
   /*----- Controllers -----*/
   public static Joystick logitech3d;
   public static XboxController xbox1;
+  public static JoystickButton xbox1SS; //Screen Share button, two rectangles
 
 
   /*----- Drive -----*/
@@ -55,6 +58,7 @@ public class RobotContainer {
   public static BackRightSwerve BR;
 
   public static SwerveGroup swerve;
+  public static ResetFeild resetFeild;
 
 
   
@@ -77,9 +81,8 @@ public class RobotContainer {
   public RobotContainer() {
     /*----- Inputs -----*/
     xbox1 = new XboxController(0);
+    xbox1SS = new JoystickButton(xbox1,7);
     //define all buttons on the XboxController here
-
-    logitech3d = new Joystick(0);
 
 
     //Drive Motors
@@ -111,6 +114,7 @@ public class RobotContainer {
 
     swerve = new SwerveGroup();
     drive = new Drive();
+    resetFeild = new ResetFeild();
 
     //Configure CAN Settings
     cFR.setStatusFramePeriod(CANCoderStatusFrame.SensorData, SwerveConstants.RefreshRateEncoders);
@@ -155,6 +159,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    xbox1SS.whenPressed(resetFeild);
 
   }
 

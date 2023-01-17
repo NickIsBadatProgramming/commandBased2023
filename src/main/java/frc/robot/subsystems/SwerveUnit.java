@@ -93,7 +93,7 @@ public class SwerveUnit extends SubsystemBase {
       return 0;
     }
 
-    return (Math.abs(difference)/difference) * SwerveConstants.AdditionalTurnSpeed * (Math.pow(Math.abs(difference),SwerveConstants.TurnSpeedLinearity)/Math.pow(180,SwerveConstants.TurnSpeedLinearity)) + SwerveConstants.MinModuleTurnSpeed; //Choose your power
+    return SwerveConstants.AdditionalTurnSpeed * (difference/180) + (SwerveConstants.MinModuleTurnSpeed * (difference/Math.abs(difference))); //Choose your power
     /* 
     //Old steering code
     if(Math.abs(difference) <= 4) {
@@ -121,7 +121,7 @@ public class SwerveUnit extends SubsystemBase {
   }
 
   public void updateMotorSpeeds() {
-    //this.driveMotor.set(ControlMode.PercentOutput, this.driveMotorSpeed);
+    this.driveMotor.set(ControlMode.PercentOutput, this.driveMotorSpeed);
     this.rotationMotor.set(ControlMode.PercentOutput, this.steerMotorSpeed);
   }
 }

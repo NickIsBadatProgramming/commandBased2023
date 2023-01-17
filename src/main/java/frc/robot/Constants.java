@@ -29,10 +29,10 @@ public final class Constants {
 
 
         
-        public static final double AdditionalTurnSpeed = 0.5; //additional speed of the motor 180 degrees from the target angle
-        public static final double MinModuleTurnSpeed = 0.11;
-        public static final double TurnSpeedLinearity = 2.4; //To what power will the calculation be (higher = smaller at smaller differences) Linear = 1, Quadratic = 2
-        public static final double SpeedMultiplier = 0.9;
+        public static final double AdditionalTurnSpeed = 0.23; //additional speed of the motor 180 degrees from the target angle
+        public static final double MinModuleTurnSpeed = 0.07;
+        public static final double TurnSpeedLinearity = 1; //To what power will the calculation be (higher = smaller at smaller differences) Linear = 1, Quadratic = 2
+        public static final double SpeedMultiplier = 0.3;
 
         public static final int RefreshRateEncoders = 50;
         public static final int RefreshRateMotors = 50;
