@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
 
 public class SwerveUnit extends SubsystemBase {
@@ -64,6 +64,11 @@ public class SwerveUnit extends SubsystemBase {
     this.desiredAngle = desiredAngle;
   }
 
+  public void move() {
+    this.driveMotorSpeed = 0;
+    this.steerMotorSpeed = 0;
+  }
+
   public double steerSpeed(double currentAngle, double desiredAngle) {
     //at 0 degrees from the angle we want he rotation speed to be 0
     // at 180 degrees we have a constant in constants for our maximum speed
@@ -78,7 +83,7 @@ public class SwerveUnit extends SubsystemBase {
     }
 
     this.difference = difference;
-    if(Math.abs(difference) < 6) {
+    if(Math.abs(difference) < SwerveConstants.ErrorMargin) {
       return 0;
     }
 
@@ -99,7 +104,11 @@ public class SwerveUnit extends SubsystemBase {
   }
 
   public void updateMotorSpeeds() {
+    if(RobotContainer.backRightPaddle.get()) {
+      this.driveMotorSpeed /= SwerveConstants.SlowMode;
+    }
     this.driveMotor.set(ControlMode.PercentOutput, this.driveMotorSpeed);
     this.rotationMotor.set(ControlMode.PercentOutput, this.steerMotorSpeed);
+
   }
 }

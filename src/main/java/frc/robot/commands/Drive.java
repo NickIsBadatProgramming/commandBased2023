@@ -10,12 +10,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.Config;
 import frc.robot.Constants.ControllerConstants;
 
 public class Drive extends CommandBase {
 
   //velocity values
-  double xV, yV, rV;
+  double xV, yV, rV, fX, fY;
 
   //slew rate limiters
   SlewRateLimiter xFilter = new SlewRateLimiter(3);
@@ -51,22 +52,29 @@ public class Drive extends CommandBase {
     rV = -driveController.getRawAxis(4);
     if (Math.abs(rV) < ControllerConstants.xboxDeadzone) rV = 0;
 
+    //flick stick stuff
+    fX = driveController.getRawAxis(4);
+    if (Math.abs(fX) < ControllerConstants.flickStickDeadzone) fX = 0;
+    fY = -driveController.getRawAxis(5);
+    if (Math.abs(fY) < ControllerConstants.flickStickDeadzone) fY = 0;
+
+    
+
     SmartDashboard.putNumber("X velocity", xV);
     SmartDashboard.putNumber("Y Velocity", yV);
     SmartDashboard.putNumber("R Velocity", rV);
 
-    if(!(xV == 0 && yV ==0 && rV == 0)) {
-
-      RobotContainer.swerve.Drive(xV, yV, rV);
-
-
+    if(RobotContainer.isUsingField) {
+      if(Config.usingFlickStick) {
+        RobotContainer.swerve.DriveWithAngle(xV, yV, fX, fY);
+      }
+      else {
+        RobotContainer.swerve.DriveField(xV, yV, rV);
+      }
     } else {
-      RobotContainer.FL.move(0, RobotContainer.FL.getRawAngle());
-      RobotContainer.FR.move(0, RobotContainer.FR.getRawAngle());
-      RobotContainer.BL.move(0, RobotContainer.BL.getRawAngle());
-      RobotContainer.BR.move(0, RobotContainer.BR.getRawAngle());
-
+        RobotContainer.swerve.Drive(xV, yV, rV);
     }
+
     RobotContainer.FL.updateMotorSpeeds();
     RobotContainer.FR.updateMotorSpeeds();
     RobotContainer.BL.updateMotorSpeeds();

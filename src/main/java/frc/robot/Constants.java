@@ -32,6 +32,16 @@ public final class Constants {
         public static final int RefreshRateEncoders = 50;
         public static final int RefreshRateMotors = 50;
 
+        public static final int SlowMode = 2;
+        public static final int ErrorMargin = 3;
+        public static final int ErrorMarginTurn = 7;
+
+
+        //Chassis rotational speeds
+        public static final double MinChassisTurnSpeed = 0.4;
+        public static final double AdditionalChassisTurnSpeed = 0.6;
+
+
 
         //Swerve Zeroes
 
@@ -43,5 +53,10 @@ public final class Constants {
     }
     public static final class ControllerConstants {
         public static final double xboxDeadzone = 0.2;
+        public static final double flickStickDeadzone = 0.6;
+    }
+
+    public static final class Config {
+        public static final boolean usingFlickStick = true;
     }
 }

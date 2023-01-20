@@ -18,6 +18,7 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ResetFeild;
+import frc.robot.commands.UseField;
 import frc.robot.subsystems.BackLeftSwerve;
 import frc.robot.subsystems.BackRightSwerve;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -39,6 +40,9 @@ public class RobotContainer {
   public static Joystick logitech3d;
   public static XboxController xbox1;
   public static JoystickButton xbox1SS; //Screen Share button, two rectangles
+  public static JoystickButton xbox1Settings;
+  public static JoystickButton backRightPaddle;
+
 
 
   /*----- Drive -----*/
@@ -50,6 +54,7 @@ public class RobotContainer {
   public static CANCoder cFR, cFL, cBL, cBR;
 
   public static Drive drive;
+  public static boolean isUsingField = true;
 
   /*----- Swerve Modules -----*/
   public static FrontLeftSwerve FL;
@@ -59,6 +64,7 @@ public class RobotContainer {
 
   public static SwerveGroup swerve;
   public static ResetFeild resetFeild;
+  public static UseField useField;
 
 
   
@@ -82,6 +88,8 @@ public class RobotContainer {
     /*----- Inputs -----*/
     xbox1 = new XboxController(0);
     xbox1SS = new JoystickButton(xbox1,7);
+    xbox1Settings = new JoystickButton(xbox1,8);
+    backRightPaddle = new JoystickButton(xbox1,10);
     //define all buttons on the XboxController here
 
 
@@ -115,6 +123,7 @@ public class RobotContainer {
     swerve = new SwerveGroup();
     drive = new Drive();
     resetFeild = new ResetFeild();
+    useField = new UseField();
 
     //Configure CAN Settings
     cFR.setStatusFramePeriod(CANCoderStatusFrame.SensorData, SwerveConstants.RefreshRateEncoders);
@@ -161,7 +170,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     xbox1SS.whenPressed(resetFeild);
-
+    xbox1Settings.whenPressed(useField);
   }
 
 

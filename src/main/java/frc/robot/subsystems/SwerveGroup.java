@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.UseField;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -49,34 +50,134 @@ public class SwerveGroup extends SubsystemBase {
 
   }
 
-  public void Drive(double vx, double vy, double vr) { //This is being mean trying something else
-    Translation2d m_frontRight = new Translation2d(SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2); //Making 2D translations from the center of the robot to the swerve modules
-    Translation2d m_frontLeft = new Translation2d(SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
-    Translation2d m_backLeft = new Translation2d(-SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
-    Translation2d m_backRight = new Translation2d(-SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2);
+  public void DriveWithAngle(double vx, double vy, double angleX, double angleY) {
+    double navAngle = -navx.getYaw();
+    if(navAngle < 0) {
+      navAngle += 360;
+    }
 
-    SwerveDriveKinematics m_Kinematics = new SwerveDriveKinematics(m_frontRight, m_frontLeft, m_backLeft, m_backRight);
+    double desiredAngle = Math.toDegrees(Math.atan(angleY/angleX)) - 90;
 
-    ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(vy, vx, vr, Rotation2d.fromDegrees(-navx.getYaw()));
+    if (angleX < 0) {
+      desiredAngle += 180;
+    }
 
-    SwerveModuleState[] moduleStates = m_Kinematics.toSwerveModuleStates(speeds);
+    if (angleX >= 0 && angleY < 0) {
+      desiredAngle += 360;
+    }
 
-    SwerveModuleState frontRight = moduleStates[0];
-    SwerveModuleState frontRightOptimized = SwerveModuleState.optimize(frontRight, Rotation2d.fromDegrees(FR.getRawAngle()));
-    SwerveModuleState frontLeft = moduleStates[1];
-    SwerveModuleState frontLeftOptimized = SwerveModuleState.optimize(frontLeft, Rotation2d.fromDegrees(FL.getRawAngle()));
-    SwerveModuleState backLeft = moduleStates[2];
-    SwerveModuleState backLeftOptimized = SwerveModuleState.optimize(backLeft, Rotation2d.fromDegrees(BL.getRawAngle()));
-    SwerveModuleState backRight = moduleStates[3];
-    SwerveModuleState backRightOptimized = SwerveModuleState.optimize(backRight, Rotation2d.fromDegrees(BR.getRawAngle()));
+    if(desiredAngle < 0) {
+      desiredAngle += 360;
+    }
 
-    FL.move(frontLeftOptimized.speedMetersPerSecond, frontLeftOptimized.angle.getDegrees());
-    FR.move(frontRightOptimized.speedMetersPerSecond, frontRightOptimized.angle.getDegrees());
-    BL.move(backLeftOptimized.speedMetersPerSecond, backLeftOptimized.angle.getDegrees());
-    BR.move(backRightOptimized.speedMetersPerSecond, backRightOptimized.angle.getDegrees());
+    double difference;
 
-    SmartDashboard.putNumber("NavX Angle", -navx.getYaw());
+    if(angleX == 0   &&  angleY == 0){
+      difference = 0;
+    } else {
+      difference = desiredAngle - navAngle;
+    }
 
+
+    if(Math.abs(difference) > 180) {
+      if(difference > 180) {
+        difference -= 360;
+      }
+      if(difference < -180) {
+        difference += 360;
+      }
+    }
+
+    if(Math.abs(difference) < SwerveConstants.ErrorMarginTurn) {
+      difference = 0;
+    }
+
+    double vr = ((Math.abs(difference)/difference) * SwerveConstants.MinChassisTurnSpeed) + ((difference/180) * SwerveConstants.AdditionalChassisTurnSpeed);
+    vr = vr / SwerveConstants.SpeedMultiplier;
+    if (difference == 0) {
+      vr = 0;
+    }
+    Drive(vx, vy, vr);
+    SmartDashboard.putNumber("Angle", desiredAngle);
+    SmartDashboard.putNumber("Difference", difference);
+  }
+
+  public void Drive(double vx, double vy, double vr) { 
+    if( vx == 0 && vy == 0 && vr == 0) {
+      FL.move();
+      FR.move();
+      BR.move();
+      BL.move();
+    } else {
+
+
+      Translation2d m_frontRight = new Translation2d(SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2); //Making 2D translations from the center of the robot to the swerve modules
+      Translation2d m_frontLeft = new Translation2d(SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
+      Translation2d m_backLeft = new Translation2d(-SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
+      Translation2d m_backRight = new Translation2d(-SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2);
+
+      SwerveDriveKinematics m_Kinematics = new SwerveDriveKinematics(m_frontRight, m_frontLeft, m_backLeft, m_backRight);
+      ChassisSpeeds speeds = new ChassisSpeeds(vy, vx, vr);
+
+        //speeds = ChassisSpeeds.fromFieldRelativeSpeeds(vy, vx, vr, Rotation2d.fromDegrees(-navx.getYaw()));
+
+
+
+      SwerveModuleState[] moduleStates = m_Kinematics.toSwerveModuleStates(speeds);
+
+      SwerveModuleState frontRight = moduleStates[0];
+      SwerveModuleState frontRightOptimized = SwerveModuleState.optimize(frontRight, Rotation2d.fromDegrees(FR.getRawAngle()));
+      SwerveModuleState frontLeft = moduleStates[1];
+      SwerveModuleState frontLeftOptimized = SwerveModuleState.optimize(frontLeft, Rotation2d.fromDegrees(FL.getRawAngle()));
+      SwerveModuleState backLeft = moduleStates[2];
+      SwerveModuleState backLeftOptimized = SwerveModuleState.optimize(backLeft, Rotation2d.fromDegrees(BL.getRawAngle()));
+      SwerveModuleState backRight = moduleStates[3];
+      SwerveModuleState backRightOptimized = SwerveModuleState.optimize(backRight, Rotation2d.fromDegrees(BR.getRawAngle()));
+
+      FL.move(frontLeftOptimized.speedMetersPerSecond, frontLeftOptimized.angle.getDegrees());
+      FR.move(frontRightOptimized.speedMetersPerSecond, frontRightOptimized.angle.getDegrees());
+      BL.move(backLeftOptimized.speedMetersPerSecond, backLeftOptimized.angle.getDegrees());
+      BR.move(backRightOptimized.speedMetersPerSecond, backRightOptimized.angle.getDegrees());
+
+      SmartDashboard.putNumber("NavX Angle", -navx.getYaw());
+    }
+  }
+
+  public void DriveField(double vx, double vy, double vr) {
+    if( vx == 0 && vy == 0 && vr == 0) {
+      FL.move();
+      FR.move();
+      BR.move();
+      BL.move();
+    } else {
+      Translation2d m_frontRight = new Translation2d(SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2); //Making 2D translations from the center of the robot to the swerve modules
+      Translation2d m_frontLeft = new Translation2d(SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
+      Translation2d m_backLeft = new Translation2d(-SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
+      Translation2d m_backRight = new Translation2d(-SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2);
+
+      SwerveDriveKinematics m_Kinematics = new SwerveDriveKinematics(m_frontRight, m_frontLeft, m_backLeft, m_backRight);
+      ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(vy, vx, vr, Rotation2d.fromDegrees(-navx.getYaw()));
+
+
+
+      SwerveModuleState[] moduleStates = m_Kinematics.toSwerveModuleStates(speeds);
+
+      SwerveModuleState frontRight = moduleStates[0];
+      SwerveModuleState frontRightOptimized = SwerveModuleState.optimize(frontRight, Rotation2d.fromDegrees(FR.getRawAngle()));
+      SwerveModuleState frontLeft = moduleStates[1];
+      SwerveModuleState frontLeftOptimized = SwerveModuleState.optimize(frontLeft, Rotation2d.fromDegrees(FL.getRawAngle()));
+      SwerveModuleState backLeft = moduleStates[2];
+      SwerveModuleState backLeftOptimized = SwerveModuleState.optimize(backLeft, Rotation2d.fromDegrees(BL.getRawAngle()));
+      SwerveModuleState backRight = moduleStates[3];
+      SwerveModuleState backRightOptimized = SwerveModuleState.optimize(backRight, Rotation2d.fromDegrees(BR.getRawAngle()));
+
+      FL.move(frontLeftOptimized.speedMetersPerSecond, frontLeftOptimized.angle.getDegrees());
+      FR.move(frontRightOptimized.speedMetersPerSecond, frontRightOptimized.angle.getDegrees());
+      BL.move(backLeftOptimized.speedMetersPerSecond, backLeftOptimized.angle.getDegrees());
+      BR.move(backRightOptimized.speedMetersPerSecond, backRightOptimized.angle.getDegrees());
+
+      SmartDashboard.putNumber("NavX Angle", -navx.getYaw());
+    }
   }
 
   public AHRS getNavX() { //for commands 
@@ -84,7 +185,7 @@ public class SwerveGroup extends SubsystemBase {
   }
 
 
-  public void CustomDrive(double x, double y, double r) {
+  public void CustomDrive(double x, double y, double r) { //Deprecated
     //Find angle of the two velocities
     //SOH CAH TOA
 
