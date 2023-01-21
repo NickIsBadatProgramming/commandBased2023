@@ -103,6 +103,24 @@ public class SwerveUnit extends SubsystemBase {
   public void periodic() {
   }
 
+  public double getSpeedsFromMotor() {
+    //talon motors specify velocity in terms of ticks per 100ms
+    //to get that to meters per second 
+    //2048 ticks in one rotation
+    //one wheel circumference per rotation
+    //0.1 seconds in 100ms
+
+    double talonVelocity = driveMotor.getSelectedSensorVelocity();
+    if(driveInverted) {
+      talonVelocity *= -1;
+    }
+    return ((talonVelocity/2048) * 10);
+  }
+
+  public double getModuleVelocity() {
+    return getSpeedsFromMotor() * (SwerveConstants.WheelCircumferenceM/SwerveConstants.SWERVE_GEAR_RATIO_DRIVE);
+  }
+
   public void updateMotorSpeeds() {
     if(RobotContainer.backRightPaddle.get()) {
       this.driveMotorSpeed /= SwerveConstants.SlowMode;

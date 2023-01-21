@@ -16,18 +16,14 @@ public final class Constants {
     public static final class SwerveConstants {
         public static final double SWERVE_GEAR_RATIO_DRIVE = 6.75; // Gear ratio of swerve drive
         public static final double SWERVE_GEAR_RATIO_STEER = 6.75;
-        public static final double MODULE_TURN_TIME_SECONDS = 0.4; //how long it takes for the modules to turn 
-        public static final int MOTOR_MAX_RPM = 3000;
 
-        public static final double WheelbaseM = 0.596955; //Dimensions for swerve calculation - in meters
-        public static final double TrackwidthM = 0.596955;
-        public static final double WheelCircumferenceM = 0.1;
-
-        public static final double FalconSpeedConstant = 600/2048; //Converting m/s to steps/millisecond, not currently used
+        public static final double TrackwidthM = 0.596955; //Dimensions for swerve calculation - in meters
+        public static final double WheelbaseM = 0.4445;
+        public static final double WheelCircumferenceM = 0.315196;
         
         public static final double AdditionalTurnSpeed = 0.28; //additional speed of the motor 180 degrees from the target angle
         public static final double MinModuleTurnSpeed = 0.07;
-        public static final double SpeedMultiplier = 0.3; //Forward Speed
+        public static final double SpeedMultiplier = 0.4; //Forward Speed
 
         public static final int RefreshRateEncoders = 50;
         public static final int RefreshRateMotors = 50;
@@ -57,6 +53,7 @@ public final class Constants {
     }
 
     public static final class Config {
-        public static final boolean usingFlickStick = true;
+        public static final boolean usingFlickStick = false;
+        public static final boolean usingLogitech360 = false;
     }
 }

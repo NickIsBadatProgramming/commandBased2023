@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -11,11 +12,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.commands.UseField;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -30,7 +31,12 @@ public class SwerveGroup extends SubsystemBase {
   static CANCoder cFL;
   static CANCoder cBL;
   static CANCoder cBR;
+
+  static TalonFX frontRightD, frontLeftD, backLeftD, backRightD;
   AHRS navx;
+
+  private SwerveDriveKinematics kinematics;
+  private SwerveDriveOdometry odometry;
 
 
   /** Creates a new SwerveGroup. */
@@ -46,10 +52,23 @@ public class SwerveGroup extends SubsystemBase {
     cFL = RobotContainer.cFL;
     cBL = RobotContainer.cBL;
     cBR = RobotContainer.cBR;
+    
+    frontRightD = RobotContainer.driveFR;
+    frontLeftD = RobotContainer.driveFL;
+    backLeftD = RobotContainer.driveBL;
+    backRightD = RobotContainer.driveBR;
+
+
+    Translation2d m_frontRight = new Translation2d(SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2); //Making 2D translations from the center of the robot to the swerve modules
+    Translation2d m_frontLeft = new Translation2d(SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
+    Translation2d m_backLeft = new Translation2d(-SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
+    Translation2d m_backRight = new Translation2d(-SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2);
+
+    this.kinematics = new SwerveDriveKinematics(m_frontRight, m_frontLeft, m_backLeft, m_backRight);
+    this.odometry = new SwerveDriveOdometry(kinematics, Rotation2d.fromDegrees(-navx.getYaw()));
 
 
   }
-
   public void DriveWithAngle(double vx, double vy, double angleX, double angleY) {
     double navAngle = -navx.getYaw();
     if(navAngle < 0) {
@@ -109,21 +128,13 @@ public class SwerveGroup extends SubsystemBase {
       BR.move();
       BL.move();
     } else {
-
-
-      Translation2d m_frontRight = new Translation2d(SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2); //Making 2D translations from the center of the robot to the swerve modules
-      Translation2d m_frontLeft = new Translation2d(SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
-      Translation2d m_backLeft = new Translation2d(-SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
-      Translation2d m_backRight = new Translation2d(-SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2);
-
-      SwerveDriveKinematics m_Kinematics = new SwerveDriveKinematics(m_frontRight, m_frontLeft, m_backLeft, m_backRight);
       ChassisSpeeds speeds = new ChassisSpeeds(vy, vx, vr);
 
         //speeds = ChassisSpeeds.fromFieldRelativeSpeeds(vy, vx, vr, Rotation2d.fromDegrees(-navx.getYaw()));
 
 
 
-      SwerveModuleState[] moduleStates = m_Kinematics.toSwerveModuleStates(speeds);
+      SwerveModuleState[] moduleStates = this.kinematics.toSwerveModuleStates(speeds);
 
       SwerveModuleState frontRight = moduleStates[0];
       SwerveModuleState frontRightOptimized = SwerveModuleState.optimize(frontRight, Rotation2d.fromDegrees(FR.getRawAngle()));
@@ -150,17 +161,11 @@ public class SwerveGroup extends SubsystemBase {
       BR.move();
       BL.move();
     } else {
-      Translation2d m_frontRight = new Translation2d(SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2); //Making 2D translations from the center of the robot to the swerve modules
-      Translation2d m_frontLeft = new Translation2d(SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
-      Translation2d m_backLeft = new Translation2d(-SwerveConstants.TrackwidthM/2,SwerveConstants.WheelbaseM/2);
-      Translation2d m_backRight = new Translation2d(-SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2);
-
-      SwerveDriveKinematics m_Kinematics = new SwerveDriveKinematics(m_frontRight, m_frontLeft, m_backLeft, m_backRight);
       ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(vy, vx, vr, Rotation2d.fromDegrees(-navx.getYaw()));
 
 
 
-      SwerveModuleState[] moduleStates = m_Kinematics.toSwerveModuleStates(speeds);
+      SwerveModuleState[] moduleStates = this.kinematics.toSwerveModuleStates(speeds);
 
       SwerveModuleState frontRight = moduleStates[0];
       SwerveModuleState frontRightOptimized = SwerveModuleState.optimize(frontRight, Rotation2d.fromDegrees(FR.getRawAngle()));
@@ -184,6 +189,9 @@ public class SwerveGroup extends SubsystemBase {
     return this.navx;
   }
 
+  public void resetOdometry() {
+    odometry.resetPosition(null, null);
+  }
 
   public void CustomDrive(double x, double y, double r) { //Deprecated
     //Find angle of the two velocities
@@ -214,8 +222,22 @@ public class SwerveGroup extends SubsystemBase {
     SmartDashboard.putNumber("Calculated Controller Angle", angle);
   }
 
-
   @Override
   public void periodic() {
+    SwerveModuleState frontRight = new SwerveModuleState(FR.getSpeedsFromMotor(),Rotation2d.fromDegrees(FR.getRawAngle()));
+    SwerveModuleState frontLeft = new SwerveModuleState(FL.getSpeedsFromMotor(),Rotation2d.fromDegrees(FL.getRawAngle()));
+    SwerveModuleState backLeft = new SwerveModuleState(BL.getSpeedsFromMotor(),Rotation2d.fromDegrees(BL.getRawAngle()));
+    SwerveModuleState backRight = new SwerveModuleState(BR.getSpeedsFromMotor(),Rotation2d.fromDegrees(BR.getRawAngle()));
+
+    SwerveModuleState[] states = {frontRight, frontLeft, backLeft, backRight};
+
+    this.odometry.update(Rotation2d.fromDegrees(-navx.getYaw()), states);
+
+    SmartDashboard.putNumber("X Position", this.odometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("Y Position", this.odometry.getPoseMeters().getY());
+
+    SmartDashboard.putNumber("Front Right Drive RPM", FR.getSpeedsFromMotor() * 60);
+
+
   }
 }

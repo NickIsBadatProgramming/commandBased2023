@@ -14,6 +14,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants.Config;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ExampleCommand;
@@ -38,6 +39,12 @@ public class RobotContainer {
 
   /*----- Controllers -----*/
   public static Joystick logitech3d;
+  public static JoystickButton thumbButton;
+  public static JoystickButton button5;
+
+
+
+
   public static XboxController xbox1;
   public static JoystickButton xbox1SS; //Screen Share button, two rectangles
   public static JoystickButton xbox1Settings;
@@ -67,6 +74,8 @@ public class RobotContainer {
   public static UseField useField;
 
 
+
+
   
 
   
@@ -89,8 +98,16 @@ public class RobotContainer {
     xbox1 = new XboxController(0);
     xbox1SS = new JoystickButton(xbox1,7);
     xbox1Settings = new JoystickButton(xbox1,8);
-    backRightPaddle = new JoystickButton(xbox1,10);
+    backRightPaddle = new JoystickButton(xbox1,6);
     //define all buttons on the XboxController here
+
+
+    //Logitech flight stick
+    logitech3d = new Joystick(0);
+    thumbButton = new JoystickButton(logitech3d, 2);
+    button5 = new JoystickButton(logitech3d, 5);
+
+
 
 
     //Drive Motors
@@ -168,9 +185,14 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    if(Config.usingFlickStick) {
+      thumbButton.whenPressed(resetFeild);
+      button5.whenPressed(useField);
+    } else {
+      xbox1SS.whenPressed(resetFeild);
+      xbox1Settings.whenPressed(useField);
+    }
 
-    xbox1SS.whenPressed(resetFeild);
-    xbox1Settings.whenPressed(useField);
   }
 
 
