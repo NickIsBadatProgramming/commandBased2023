@@ -14,18 +14,23 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.Drive;
+import frc.robot.commands.DriveCoordinates;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ResetFeild;
+import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.UseField;
+import frc.robot.commands.VisionStatus;
 import frc.robot.subsystems.BackLeftSwerve;
 import frc.robot.subsystems.BackRightSwerve;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FrontLeftSwerve;
 import frc.robot.subsystems.FrontRightSwerve;
 import frc.robot.subsystems.SwerveGroup;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -72,6 +77,10 @@ public class RobotContainer {
   public static SwerveGroup swerve;
   public static ResetFeild resetFeild;
   public static UseField useField;
+  public static Vision vision;
+  public static VisionStatus status;
+  public static ResetOdometry resetOdometry;
+  public static DriveCoordinates driveCoordinates;
 
 
 
@@ -94,6 +103,8 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+
     /*----- Inputs -----*/
     xbox1 = new XboxController(0);
     xbox1SS = new JoystickButton(xbox1,7);
@@ -141,6 +152,11 @@ public class RobotContainer {
     drive = new Drive();
     resetFeild = new ResetFeild();
     useField = new UseField();
+    vision = new Vision();
+    status = new VisionStatus();
+    resetOdometry = new ResetOdometry();
+    driveCoordinates = new DriveCoordinates(0.2, 0, 0);
+
 
     //Configure CAN Settings
     cFR.setStatusFramePeriod(CANCoderStatusFrame.SensorData, SwerveConstants.RefreshRateEncoders);
@@ -171,6 +187,11 @@ public class RobotContainer {
     driveBL.setNeutralMode(NeutralMode.Brake);
     driveBR.setNeutralMode(NeutralMode.Brake);
 
+    //SmartDashboard Stuff
+    SmartDashboard.putData("Reset Field", resetFeild);
+    SmartDashboard.putData("Switch Relativity", useField);
+    SmartDashboard.putData("Reset Odometry", resetOdometry);
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -185,7 +206,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    if(Config.usingFlickStick) {
+    if(Config.usingLogitech360) {
       thumbButton.whenPressed(resetFeild);
       button5.whenPressed(useField);
     } else {
@@ -205,6 +226,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return driveCoordinates;
   }
 }

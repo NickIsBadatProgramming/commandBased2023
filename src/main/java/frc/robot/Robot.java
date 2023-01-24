@@ -84,6 +84,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     RobotContainer.drive.schedule();
+    RobotContainer.status.schedule();
   }
 
   @Override

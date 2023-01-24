@@ -121,6 +121,40 @@ public class SwerveGroup extends SubsystemBase {
     SmartDashboard.putNumber("Difference", difference);
   }
 
+  public void DriveWithAngle(double vx, double vy, double angle) {
+    double navAngle = -navx.getYaw();
+    if(navAngle < 0) {
+      navAngle += 360;
+    }
+
+    double difference = angle - navAngle;
+
+
+
+    if(Math.abs(difference) > 180) {
+      if(difference > 180) {
+        difference -= 360;
+      }
+      if(difference < -180) {
+        difference += 360;
+      }
+    }
+
+    if(Math.abs(difference) < SwerveConstants.ErrorMarginTurn) {
+      difference = 0;
+    }
+
+    double vr = ((Math.abs(difference)/difference) * SwerveConstants.MinChassisTurnSpeed) + ((difference/180) * SwerveConstants.AdditionalChassisTurnSpeed);
+    vr = vr / SwerveConstants.SpeedMultiplier;
+    if (difference == 0) {
+      vr = 0;
+    }
+    Drive(vx, vy, vr);
+    SmartDashboard.putNumber("Angle", angle);
+    SmartDashboard.putNumber("Difference", difference);
+  }
+
+
   public void Drive(double vx, double vy, double vr) { 
     if( vx == 0 && vy == 0 && vr == 0) {
       FL.move();
@@ -193,6 +227,11 @@ public class SwerveGroup extends SubsystemBase {
     odometry.resetPosition(null, null);
   }
 
+  public Double[] getOdometry() {
+    Double[] returnValues = {this.odometry.getPoseMeters().getX(), this.odometry.getPoseMeters().getY()};
+    return returnValues;
+  }
+
   public void CustomDrive(double x, double y, double r) { //Deprecated
     //Find angle of the two velocities
     //SOH CAH TOA
@@ -224,10 +263,10 @@ public class SwerveGroup extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SwerveModuleState frontRight = new SwerveModuleState(FR.getSpeedsFromMotor(),Rotation2d.fromDegrees(FR.getRawAngle()));
-    SwerveModuleState frontLeft = new SwerveModuleState(FL.getSpeedsFromMotor(),Rotation2d.fromDegrees(FL.getRawAngle()));
-    SwerveModuleState backLeft = new SwerveModuleState(BL.getSpeedsFromMotor(),Rotation2d.fromDegrees(BL.getRawAngle()));
-    SwerveModuleState backRight = new SwerveModuleState(BR.getSpeedsFromMotor(),Rotation2d.fromDegrees(BR.getRawAngle()));
+    SwerveModuleState frontRight = new SwerveModuleState(FR.getModuleVelocity(),Rotation2d.fromDegrees(FR.getRawAngle()));
+    SwerveModuleState frontLeft = new SwerveModuleState(FL.getModuleVelocity(),Rotation2d.fromDegrees(FL.getRawAngle()));
+    SwerveModuleState backLeft = new SwerveModuleState(BL.getModuleVelocity(),Rotation2d.fromDegrees(BL.getRawAngle()));
+    SwerveModuleState backRight = new SwerveModuleState(BR.getModuleVelocity(),Rotation2d.fromDegrees(BR.getRawAngle()));
 
     SwerveModuleState[] states = {frontRight, frontLeft, backLeft, backRight};
 
@@ -235,8 +274,6 @@ public class SwerveGroup extends SubsystemBase {
 
     SmartDashboard.putNumber("X Position", this.odometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Y Position", this.odometry.getPoseMeters().getY());
-
-    SmartDashboard.putNumber("Front Right Drive RPM", FR.getSpeedsFromMotor() * 60);
 
 
   }

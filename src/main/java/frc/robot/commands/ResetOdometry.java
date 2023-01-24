@@ -7,19 +7,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class UseField extends CommandBase {
-  /** Creates a new useField. */
-  public UseField() {
+public class ResetOdometry extends CommandBase {
+  /** Creates a new ResetOdometry. */
+  public ResetOdometry() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.swerve);
-    System.out.println("switched relativity");
-    RobotContainer.isUsingField = !RobotContainer.isUsingField;
-  }
-
-  public UseField(boolean useField) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.swerve);
-    RobotContainer.isUsingField = useField;
   }
 
   // Called when the command is initially scheduled.
@@ -29,6 +21,7 @@ public class UseField extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    RobotContainer.swerve.resetOdometry();
   }
 
   // Called once the command ends or is interrupted.

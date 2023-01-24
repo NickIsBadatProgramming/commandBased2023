@@ -46,6 +46,13 @@ public final class Constants {
         public static final double BL_Zero = 352.4;
         public static final double BR_Zero = 164.1;
 
+
+        //Autonomous Variables
+        public static final double basePathSpeed = 0.4;
+        public static final double nearPathSpeed = 0.2;
+        public static final double distanceBeforeSlow = 0.1;
+        public static final double error = 0.05;
+
     }
     public static final class ControllerConstants {
         public static final double xboxDeadzone = 0.2;
@@ -54,6 +61,6 @@ public final class Constants {
 
     public static final class Config {
         public static final boolean usingFlickStick = false;
-        public static final boolean usingLogitech360 = false;
+        public static final boolean usingLogitech360 = true;
     }
 }
