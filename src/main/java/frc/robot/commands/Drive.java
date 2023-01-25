@@ -25,6 +25,8 @@ public class Drive extends CommandBase {
   SlewRateLimiter rFilter = new SlewRateLimiter(0);
 
 
+
+
   /** Creates a new Drive. */
   public Drive() {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -47,6 +49,8 @@ public class Drive extends CommandBase {
     //xV = xFilter.calculate(driveController.getRawAxis(0));
    // yV = yFilter.calculate(driveController.getRawAxis(1));
    // rV = rFilter.calculate(driveController.getRawAxis(4));
+
+    SmartDashboard.putBoolean("Is using field", RobotContainer.isUsingField);
 
 
     if(Config.usingLogitech360) {

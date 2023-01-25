@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
@@ -12,6 +13,7 @@ import frc.robot.Constants.SwerveConstants;
 public class DriveCoordinates extends CommandBase {
 
   double x, y, angle;
+  double xDifference, yDifference;
 
   boolean finished = false;
 
@@ -22,55 +24,50 @@ public class DriveCoordinates extends CommandBase {
     this.x = x;
     this.y = y;
     this.angle = angle;
+
+    System.out.println("Autonomous was called");
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.resetFeild.schedule();
-    RobotContainer.resetOdometry.schedule();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     double xSpeed, ySpeed;
+    
+    //FIXME Divide by speed multiplier because of bug
 
-    if(Math.abs(this.x - RobotContainer.swerve.getOdometry()[0]) < SwerveConstants.distanceBeforeSlow) {
-      if(Math.abs(this.x - RobotContainer.swerve.getOdometry()[0]) < SwerveConstants.error) {
-        xSpeed = 0;
-      } else {
-      xSpeed = SwerveConstants.nearPathSpeed;
-      }
-    } else {
-      xSpeed = SwerveConstants.basePathSpeed;
+    this.xDifference = this.x - RobotContainer.swerve.getOdometryX();
+    this.yDifference = this.y - RobotContainer.swerve.getOdometryY();
+
+    xSpeed = (Math.abs(xDifference)/xDifference) * SwerveConstants.basePathSpeed;
+    if(xDifference <= SwerveConstants.distanceBeforeSlow) {
+      xSpeed = (Math.abs(xDifference)/xDifference) * SwerveConstants.nearPathSpeed;
     }
 
-    if(Math.abs(this.y - RobotContainer.swerve.getOdometry()[0]) < SwerveConstants.distanceBeforeSlow) {
-      if(Math.abs(this.y - RobotContainer.swerve.getOdometry()[0]) < SwerveConstants.error) {
-        ySpeed = 0;
-      } else {
-      ySpeed = SwerveConstants.nearPathSpeed;
-      }
-    } else {
-      ySpeed = SwerveConstants.basePathSpeed;
+    ySpeed = (Math.abs(yDifference)/yDifference) * SwerveConstants.basePathSpeed;
+    if(yDifference <= SwerveConstants.distanceBeforeSlow) {
+      ySpeed = (Math.abs(yDifference)/yDifference) * SwerveConstants.nearPathSpeed;
     }
 
-    if((this.x/Math.abs(this.x)) < 0) {
-      xSpeed *= -1;
+    SmartDashboard.putNumber("Odometry Y Difference" , this.y);
+
+    if(Math.abs(this.xDifference) < SwerveConstants.error) {
+    xSpeed = 0;
     }
 
-    if((this.y/Math.abs(this.y)) < 0) {
-      ySpeed *= -1;
+    if(Math.abs(this.yDifference) < SwerveConstants.error) {
+    ySpeed = 0;
     }
 
     RobotContainer.swerve.DriveWithAngle(xSpeed, ySpeed, angle);
-
-    if(ySpeed == 0 && xSpeed == 0) {
-      this.finished = true;
-    }
-
-
+    RobotContainer.FL.updateMotorSpeeds();
+    RobotContainer.FR.updateMotorSpeeds();
+    RobotContainer.BL.updateMotorSpeeds();
+    RobotContainer.BR.updateMotorSpeeds();
   }
 
   // Called once the command ends or is interrupted.

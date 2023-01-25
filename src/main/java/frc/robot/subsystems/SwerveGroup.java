@@ -25,7 +25,7 @@ public class SwerveGroup extends SubsystemBase {
   static SwerveUnit FR;
   static SwerveUnit FL;
   static SwerveUnit BL;
-  static SwerveUnit BR;
+  static SwerveUnit BR; 
 
   static CANCoder cFR;
   static CANCoder cFL;
@@ -122,12 +122,14 @@ public class SwerveGroup extends SubsystemBase {
   }
 
   public void DriveWithAngle(double vx, double vy, double angle) {
+    
     double navAngle = -navx.getYaw();
+
     if(navAngle < 0) {
       navAngle += 360;
     }
 
-    double difference = angle - navAngle;
+    double difference = 0;// = angle - navAngle;
 
 
 
@@ -145,11 +147,14 @@ public class SwerveGroup extends SubsystemBase {
     }
 
     double vr = ((Math.abs(difference)/difference) * SwerveConstants.MinChassisTurnSpeed) + ((difference/180) * SwerveConstants.AdditionalChassisTurnSpeed);
-    vr = vr / SwerveConstants.SpeedMultiplier;
+     vr = vr / SwerveConstants.SpeedMultiplier;
+
     if (difference == 0) {
       vr = 0;
     }
-    Drive(vx, vy, vr);
+    vr = 0;
+
+    DriveField(vx, vy, vr);
     SmartDashboard.putNumber("Angle", angle);
     SmartDashboard.putNumber("Difference", difference);
   }
@@ -227,9 +232,11 @@ public class SwerveGroup extends SubsystemBase {
     odometry.resetPosition(null, null);
   }
 
-  public Double[] getOdometry() {
-    Double[] returnValues = {this.odometry.getPoseMeters().getX(), this.odometry.getPoseMeters().getY()};
-    return returnValues;
+  public double getOdometryX() {
+    return this.odometry.getPoseMeters().getX();
+  }
+  public double getOdometryY() {
+    return this.odometry.getPoseMeters().getY();
   }
 
   public void CustomDrive(double x, double y, double r) { //Deprecated

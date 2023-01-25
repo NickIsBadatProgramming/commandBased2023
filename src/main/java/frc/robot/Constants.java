@@ -48,8 +48,8 @@ public final class Constants {
 
 
         //Autonomous Variables
-        public static final double basePathSpeed = 0.4;
-        public static final double nearPathSpeed = 0.2;
+        public static final double basePathSpeed = 0.3;
+        public static final double nearPathSpeed = 0.15;
         public static final double distanceBeforeSlow = 0.1;
         public static final double error = 0.05;
 

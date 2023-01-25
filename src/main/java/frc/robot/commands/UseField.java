@@ -9,17 +9,12 @@ import frc.robot.RobotContainer;
 
 public class UseField extends CommandBase {
   /** Creates a new useField. */
+
+  boolean isFinished = false;
+
   public UseField() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.swerve);
-    System.out.println("switched relativity");
-    RobotContainer.isUsingField = !RobotContainer.isUsingField;
-  }
-
-  public UseField(boolean useField) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.swerve);
-    RobotContainer.isUsingField = useField;
   }
 
   // Called when the command is initially scheduled.
@@ -29,6 +24,9 @@ public class UseField extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    System.out.println("switched relativity");
+    RobotContainer.isUsingField = !RobotContainer.isUsingField;
+    isFinished = true;
   }
 
   // Called once the command ends or is interrupted.
@@ -38,6 +36,6 @@ public class UseField extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isFinished;
   }
 }

@@ -155,7 +155,7 @@ public class RobotContainer {
     vision = new Vision();
     status = new VisionStatus();
     resetOdometry = new ResetOdometry();
-    driveCoordinates = new DriveCoordinates(0.2, 0, 0);
+    driveCoordinates = new DriveCoordinates(0.6, 0, 0); //Y is (-) left and (+) right and X is (-) back to (+) front
 
 
     //Configure CAN Settings
