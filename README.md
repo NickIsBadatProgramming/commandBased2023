@@ -8,6 +8,8 @@ commandBased2023 is the base code for Team 5442's 2023 robot. It has been proven
 >* Optimized Inverse Kinematics 
 >* Tunable Drivetrain
 >* Angular Positioning 
+>* Basic Vision
+>* Odometry
 >* More to come in the future
 
 
