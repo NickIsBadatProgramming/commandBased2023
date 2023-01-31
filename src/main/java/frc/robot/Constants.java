@@ -63,4 +63,28 @@ public final class Constants {
         public static final boolean usingFlickStick = false;
         public static final boolean usingLogitech360 = true;
     }
+    public static final class AutonomousConstants {
+        public static final int AprilTagRedRight = 1; //As viewed from the opposite of the field 
+        public static final int AprilTagRedMiddle = 2;
+        public static final int AprilTagRedLeft = 3;
+        public static final int AprilTagRedCargoCenter = 5;
+
+        public static final int AprilTagBlueRight = 6;
+        public static final int AprilTagBlueMiddle = 7;
+        public static final int AprilTagBlueLeft = 8;
+        public static final int AprilTagBlueCargoCenter = 4;
+
+        public static final double DistanceBetweenTags = 1.6764; //meters
+        public static final double DistanceToCargoCenterTag = 2.32537;
+        public static final double CargoCenterTagRecess = 0.665226;
+
+
+    }
+    public static final class ArmConstants {
+        public static final double MaxArmLength = 0; //FIXME calculate robot limits
+
+        public static final double pivotSpeed = 0.5; //FIXME tune these
+        public static final double winchSpeed = 0.3;
+
+    }
 }

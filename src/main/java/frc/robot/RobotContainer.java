@@ -11,14 +11,18 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.commands.DriveCoordinates;
+import frc.robot.commands.EnableLimts;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ResetFeild;
 import frc.robot.commands.ResetOdometry;
@@ -81,6 +85,15 @@ public class RobotContainer {
   public static VisionStatus status;
   public static ResetOdometry resetOdometry;
   public static DriveCoordinates driveCoordinates;
+
+  /*----- Gripper Components -----*/
+  public static TalonFX winchMotor, pivotMotor;
+  public static PneumaticHub pneumaticHub;
+  public static DoubleSolenoid grabRight, grabLeft, brake;
+
+  public static boolean enableLimits = true;
+  public static EnableLimts enableLimitsCommand;
+
 
 
 
@@ -191,6 +204,19 @@ public class RobotContainer {
     SmartDashboard.putData("Reset Field", resetFeild);
     SmartDashboard.putData("Switch Relativity", useField);
     SmartDashboard.putData("Reset Odometry", resetOdometry);
+
+    //Gripper Stuff
+    pneumaticHub = new PneumaticHub(); //FIXME add pneumaticHub ID
+    grabLeft = new DoubleSolenoid(null, 0, 0); //FIXME add the right channels
+    grabRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 0);
+    brake = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 0);
+    pivotMotor = new TalonFX(0);//FIXME assign motor IDs
+    winchMotor = new TalonFX(0);
+    enableLimitsCommand = new EnableLimts();
+
+    SmartDashboard.putData("Limit Switch", enableLimitsCommand);
+    SmartDashboard.putBoolean("Is Using Limits", enableLimits);
+    
 
     // Configure the button bindings
     configureButtonBindings();
