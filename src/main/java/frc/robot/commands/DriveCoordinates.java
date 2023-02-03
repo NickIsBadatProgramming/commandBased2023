@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.Constants.SwerveConstants;
 
 public class DriveCoordinates extends CommandBase {
 
@@ -37,8 +36,6 @@ public class DriveCoordinates extends CommandBase {
   @Override
   public void execute() {
     double xSpeed, ySpeed;
-    
-    //FIXME Divide by speed multiplier because of bug
 
     this.xDifference = this.x - RobotContainer.swerve.getOdometryX();
     this.yDifference = this.y - RobotContainer.swerve.getOdometryY();

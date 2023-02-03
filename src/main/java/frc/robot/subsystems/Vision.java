@@ -12,7 +12,7 @@ public class Vision extends SubsystemBase {
 
   //Positional Variables
 
-  private double tx, ty, tz, ax, ay, az; //Translational values and angles
+  private double tx, ty, tz, az; //Translational values and angles
 
   private double target; 
 
@@ -46,6 +46,11 @@ public class Vision extends SubsystemBase {
     return this.tz;
   }
 
+  public double az() {
+    return this.az;
+  }
+
+
 
   @Override
   public void periodic() {
@@ -55,8 +60,6 @@ public class Vision extends SubsystemBase {
     this.tx = array[0].doubleValue();
     this.ty = array[1].doubleValue();
     this.tz = array[2].doubleValue();
-    this.ax = array[3].doubleValue();
-    this.ay = array[4].doubleValue();
     this.az = array[5].doubleValue();
     this.target = table.getEntry("tv").getDouble(0);
   }
