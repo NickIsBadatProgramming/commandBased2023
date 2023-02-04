@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -44,7 +45,7 @@ public class SwerveGroup extends SubsystemBase {
 
   /** Creates a new SwerveGroup. */
   public SwerveGroup() {
-    navx = new AHRS(SerialPort.Port.kMXP);
+    navx = new AHRS(SPI.Port.kMXP);
     //Grab everything where it was initialized in RobotContainer
     FR = RobotContainer.FR;
     FL = RobotContainer.FL;

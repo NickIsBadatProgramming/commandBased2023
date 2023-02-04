@@ -11,12 +11,15 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.SwerveConstants;
@@ -24,8 +27,10 @@ import frc.robot.commands.Drive;
 import frc.robot.commands.DriveCoordinates;
 import frc.robot.commands.EnableLimts;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.Grab;
 import frc.robot.commands.ResetFeild;
 import frc.robot.commands.ResetOdometry;
+import frc.robot.commands.ToggleGrip;
 import frc.robot.commands.UseField;
 import frc.robot.commands.VisionStatus;
 import frc.robot.subsystems.BackLeftSwerve;
@@ -33,6 +38,7 @@ import frc.robot.subsystems.BackRightSwerve;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FrontLeftSwerve;
 import frc.robot.subsystems.FrontRightSwerve;
+import frc.robot.subsystems.Grabber;
 import frc.robot.subsystems.SwerveGroup;
 import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,10 +60,16 @@ public class RobotContainer {
 
 
 
-  public static XboxController xbox1;
+
+
+  public static XboxController xbox1, xbox2;
   public static JoystickButton xbox1SS; //Screen Share button, two rectangles
   public static JoystickButton xbox1Settings;
   public static JoystickButton backRightPaddle;
+
+  //xbox2
+
+  public static JoystickButton xbox2A;
 
 
 
@@ -86,21 +98,22 @@ public class RobotContainer {
   public static ResetOdometry resetOdometry;
   public static DriveCoordinates driveCoordinates;
 
-  /*----- Gripper Components -----*/
+
+  /*----- Gripper Components -----*/ 
   public static TalonFX winchMotor, pivotMotor;
   public static PneumaticHub pneumaticHub;
-  public static DoubleSolenoid grabRight, grabLeft, brake;
+  public static DoubleSolenoid grabberSolenoid, brakeSolenoid;
+  public static Solenoid test;
 
   public static boolean enableLimits = true;
-  public static EnableLimts enableLimitsCommand;
+  public static EnableLimts enableLimitsCommand;  
+  public static Grabber grabber;
 
+  public static Compressor compressor;
+  public static Grab grabCommand;
+  public static ToggleGrip toggleGrip;
+  public static boolean grip = false;
 
-
-
-
-  
-
-  
 
   
 
@@ -130,6 +143,11 @@ public class RobotContainer {
     logitech3d = new Joystick(0);
     thumbButton = new JoystickButton(logitech3d, 2);
     button5 = new JoystickButton(logitech3d, 5);
+
+    //xbox controller #2
+    xbox2 = new XboxController(1);
+    xbox2A = new JoystickButton(xbox2, 1);
+
 
 
 
@@ -206,16 +224,26 @@ public class RobotContainer {
     SmartDashboard.putData("Reset Odometry", resetOdometry);
 
     //Gripper Stuff
-    pneumaticHub = new PneumaticHub(); //FIXME add pneumaticHub ID
-    grabLeft = new DoubleSolenoid(null, 0, 0); //FIXME add the right channels
-    grabRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 0);
-    brake = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 0);
-    pivotMotor = new TalonFX(0);//FIXME assign motor IDs
-    winchMotor = new TalonFX(0);
+
+    
+    pneumaticHub = new PneumaticHub(17);
+    grabberSolenoid = new DoubleSolenoid(17,PneumaticsModuleType.CTREPCM, 0, 1); //FIXME add the right channels
+    brakeSolenoid = new DoubleSolenoid(17, PneumaticsModuleType.CTREPCM, 2, 3);
+    pivotMotor = new TalonFX(16);
+    winchMotor = new TalonFX(15);
     enableLimitsCommand = new EnableLimts();
+    grabber = new Grabber();
+    grabCommand = new Grab();
+    toggleGrip = new ToggleGrip();
+
+    pivotMotor.setNeutralMode(NeutralMode.Brake);
+    winchMotor.setNeutralMode(NeutralMode.Brake);
+
+    compressor = new Compressor(17, PneumaticsModuleType.CTREPCM);
+    System.out.println("Compressor initated as " + compressor.getConfigType());
 
     SmartDashboard.putData("Limit Switch", enableLimitsCommand);
-    SmartDashboard.putBoolean("Is Using Limits", enableLimits);
+    
     
 
     // Configure the button bindings
@@ -239,6 +267,8 @@ public class RobotContainer {
       xbox1SS.whenPressed(resetFeild);
       xbox1Settings.whenPressed(useField);
     }
+
+    xbox2A.whenPressed(toggleGrip);
 
   }
 

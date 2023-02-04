@@ -90,7 +90,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     RobotContainer.drive.schedule();
-    RobotContainer.status.schedule();
+    RobotContainer.grabCommand.schedule();
+    //RobotContainer.status.schedule(); //FIXME add back in when vision is mounted again
   }
 
   @Override

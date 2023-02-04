@@ -7,10 +7,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class EnableLimts extends CommandBase {
-  /** Creates a new EnableLimts. */
-  public EnableLimts() {
+public class ToggleGrip extends CommandBase {
+  /** Creates a new ToggleGrip. */
+  public ToggleGrip() {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.grabber);
   }
 
   // Called when the command is initially scheduled.
@@ -20,7 +21,7 @@ public class EnableLimts extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-   RobotContainer.enableLimits = !RobotContainer.enableLimits;
+    RobotContainer.grip = !RobotContainer.grip;
   }
 
   // Called once the command ends or is interrupted.

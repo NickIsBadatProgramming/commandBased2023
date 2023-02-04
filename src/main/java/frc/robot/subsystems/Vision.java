@@ -16,8 +16,6 @@ public class Vision extends SubsystemBase {
 
   private double target; 
 
-  private Number[] array;
-
   //NetworkTables Stuff
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
@@ -55,12 +53,12 @@ public class Vision extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Number[] defaultNumber = {0};
-    array = table.getEntry("camtran").getNumberArray(defaultNumber);
-    this.tx = array[0].doubleValue();
-    this.ty = array[1].doubleValue();
-    this.tz = array[2].doubleValue();
-    this.az = array[5].doubleValue();
-    this.target = table.getEntry("tv").getDouble(0);
+    // Number[] defaultNumber = {0};
+    // array = table.getEntry("camtran").getNumberArray(defaultNumber);
+    // this.tx = array[0].doubleValue();
+    // this.ty = array[1].doubleValue();
+    // this.tz = array[2].doubleValue();
+    // this.az = array[5].doubleValue();
+    // this.target = table.getEntry("tv").getDouble(0); //FIXME add back in when vision is mounted
   }
 }

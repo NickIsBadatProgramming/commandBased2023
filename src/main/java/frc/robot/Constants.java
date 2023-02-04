@@ -81,10 +81,17 @@ public final class Constants {
 
     }
     public static final class ArmConstants {
-        public static final double MaxArmLength = 0; //FIXME calculate robot limits
+        public static final double MaxArmLength = 557908; 
+        public static final double MinArmLength = 0;
+        public static final double ArmLengthError = 10;
 
-        public static final double pivotSpeed = 0.5; //FIXME tune these
-        public static final double winchSpeed = 0.3;
+        //pivot constants
+        public static final double MaxArmPivot = 161217;
+        public static final double MinArmPivot = -33338;
+        public static final double PivotError = 10;
+
+        public static final double pivotSpeed = 0.30;
+        public static final double winchSpeed = 0.6;
 
     }
 }
