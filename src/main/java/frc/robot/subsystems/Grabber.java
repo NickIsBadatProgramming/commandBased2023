@@ -40,21 +40,25 @@ public class Grabber extends SubsystemBase {
     brakeSolenoid = RobotContainer.brakeSolenoid;
   }
 
+  // public double getCurrentHeight() {
+  //   double distanceInches = 
+  // }
+ 
   public void pivot (double speed) { //This should be -1 or 1
-    double position = pivotMotor.getSelectedSensorPosition();
+    double position = pivotMotor.getSelectedSensorPosition() - RobotContainer.pivotZero;
     //speed = -speed;
 
     if(RobotContainer.enableLimits) {
 
       if(speed == 0) {
         pivotMotor.set(ControlMode.PercentOutput, 0);
-        brakeSolenoid.set(DoubleSolenoid.Value.kForward);
+        brakeSolenoid.set(DoubleSolenoid.Value.kReverse); //Normally kForward
       } else {
         brakeSolenoid.set(DoubleSolenoid.Value.kReverse);
       }
 
       if(speed < 0) {
-        if(position < ArmConstants.MinArmPivot + ArmConstants.PivotError) {
+        if(position < ArmConstants.MinArmPivotAngle + ArmConstants.PivotError) {
           pivotMotor.set(ControlMode.PercentOutput, 0);
         } else {
           pivotMotor.set(ControlMode.PercentOutput, speed * ArmConstants.pivotSpeed);
@@ -62,8 +66,8 @@ public class Grabber extends SubsystemBase {
       } 
 
       if(speed > 0) {
-        if(position > ArmConstants.MaxArmPivot - ArmConstants.PivotError) {
-          winchMotor.set(ControlMode.PercentOutput, 0);
+        if(position > ArmConstants.MaxArmPivotAngle - ArmConstants.PivotError) {
+          pivotMotor.set(ControlMode.PercentOutput, 0);
         } else {
           pivotMotor.set(ControlMode.PercentOutput, speed * ArmConstants.pivotSpeed);
         }
@@ -80,7 +84,7 @@ public class Grabber extends SubsystemBase {
   public void winch (double speed) { //This should be -1 or 1
 
     speed = -speed;
-    double position = winchMotor.getSelectedSensorPosition();
+    double position = winchMotor.getSelectedSensorPosition() - RobotContainer.winchZero;
 
     if(RobotContainer.enableLimits) {
 
@@ -123,8 +127,8 @@ public class Grabber extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("Compressor Enabled", RobotContainer.compressor.enabled());
-    SmartDashboard.putNumber("Winch Position", winchMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Winch Position", winchMotor.getSelectedSensorPosition() - RobotContainer.winchZero);
     SmartDashboard.putBoolean("Is Using Limits", RobotContainer.enableLimits);
-    SmartDashboard.putNumber("Pivot Angle", pivotMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Pivot Angle", pivotMotor.getSelectedSensorPosition() - RobotContainer.pivotZero);
   }
 }

@@ -23,7 +23,9 @@ public final class Constants {
         
         public static final double AdditionalTurnSpeed = 0.28; //additional speed of the motor 180 degrees from the target angle
         public static final double MinModuleTurnSpeed = 0.07;
-        public static final double SpeedMultiplier = 0.4; //Forward Speed
+        public static final double SpeedMultiplier = 0.7; //Forward Speed
+        public static final double MinimumSpeedMultiplier = 0.2; //Minimum forward speed multiplier
+        public static final double AdditionalSpeed = 1 - MinimumSpeedMultiplier;
 
         public static final int RefreshRateEncoders = 50;
         public static final int RefreshRateMotors = 50;
@@ -41,10 +43,10 @@ public final class Constants {
 
         //Swerve Zeroes
 
-        public static final double FR_Zero = 187.2;
-        public static final double FL_Zero = 210.4;
-        public static final double BL_Zero = 352.4;
-        public static final double BR_Zero = 164.1;
+        public static final double FR_Zero = 357.1;
+        public static final double FL_Zero = 173.6;
+        public static final double BL_Zero = 183.3;
+        public static final double BR_Zero = 216.7;
 
 
         //Autonomous Variables
@@ -57,6 +59,7 @@ public final class Constants {
     public static final class ControllerConstants {
         public static final double xboxDeadzone = 0.2;
         public static final double flickStickDeadzone = 0.6;
+        public static final double armYDeadzone = 0.3;
     }
 
     public static final class Config {
@@ -81,17 +84,33 @@ public final class Constants {
 
     }
     public static final class ArmConstants {
-        public static final double MaxArmLength = 557908; 
+
+
+        public static final double MaxArmLength = 374267; 
         public static final double MinArmLength = 0;
         public static final double ArmLengthError = 10;
 
         //pivot constants
-        public static final double MaxArmPivot = 161217;
-        public static final double MinArmPivot = -33338;
+        public static final double MaxArmPivotAngle = 161217;
+        public static final double MinArmPivotAngle = -33338;
         public static final double PivotError = 10;
 
-        public static final double pivotSpeed = 0.30;
-        public static final double winchSpeed = 0.6;
+        //Dimensional constraints
+        public static final double MaxArmHeight = 0; //All lengths in inches
+        public static final double MinArmHeight = 0;
+        public static final double FrontMaxFrameExtension = 0;
+        public static final double BackMaxFrameExtension = 0;
+        public static final double MinArmHeightInsideFrame = 0;
+        public static final double FrameAngleBoundsFront = 0;
+        public static final double FrameAngleBountsRear = 0;
+
+
+        public static final double pivotSpeed = 0.35;
+        public static final double winchSpeed = 0.9;
+
+        public static final double ticksPerInch = 0;
+
+        public static final double slowZone = 0.35;
 
     }
 }

@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ControllerConstants;
 
 public class Grab extends CommandBase {
@@ -26,11 +27,15 @@ public class Grab extends CommandBase {
   @Override
   public void execute() {
 
-    pivot = -RobotContainer.xbox2.getRawAxis(1);
-    if(Math.abs(pivot) < ControllerConstants.xboxDeadzone) {
+    pivot = RobotContainer.xbox2.getRawAxis(5);
+    if(Math.abs(pivot) < ControllerConstants.armYDeadzone) {
       pivot = 0;
     }
-    extend = RobotContainer.xbox2.getRawAxis(5);
+
+    if(Math.abs(pivot) < ArmConstants.slowZone) {
+      pivot /= 2;
+    }
+    extend = -RobotContainer.xbox2.getRawAxis(4);
     if(Math.abs(extend) < ControllerConstants.xboxDeadzone) {
       extend = 0;
     }

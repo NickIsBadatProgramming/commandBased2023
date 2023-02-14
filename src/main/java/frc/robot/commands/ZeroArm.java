@@ -4,18 +4,14 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class UseField extends CommandBase {
-  /** Creates a new useField. */
-
-  boolean isFinished = false;
-
-  public UseField() {
+public class ZeroArm extends CommandBase {
+  /** Creates a new ZeroArm. */
+  public ZeroArm() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.swerve);
+    addRequirements(RobotContainer.grabber);
   }
 
   // Called when the command is initially scheduled.
@@ -25,11 +21,8 @@ public class UseField extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("switched relativity");
-    RobotContainer.isUsingField = !RobotContainer.isUsingField;
-    SmartDashboard.putBoolean("Is using field", RobotContainer.isUsingField);
-    isFinished = true;
-  
+    RobotContainer.winchZero = RobotContainer.winchMotor.getSelectedSensorPosition();
+    RobotContainer.pivotZero = RobotContainer.pivotMotor.getSelectedSensorPosition();
   }
 
   // Called once the command ends or is interrupted.
@@ -39,6 +32,6 @@ public class UseField extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isFinished;
+    return true;
   }
 }

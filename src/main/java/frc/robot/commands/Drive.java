@@ -13,11 +13,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.SwerveConstants;
 
 public class Drive extends CommandBase {
 
   //velocity values
-  double xV, yV, rV, fX, fY;
+  double xV, yV, rV, fX, fY, rV2, xV2, yV2, speedMultiplier;
 
   //slew rate limiters
   SlewRateLimiter xFilter = new SlewRateLimiter(3);
@@ -61,7 +62,12 @@ public class Drive extends CommandBase {
       if (Math.abs(yV) < ControllerConstants.xboxDeadzone) yV = 0;
       rV = -driveController.getRawAxis(2);
       if (Math.abs(rV) < ControllerConstants.xboxDeadzone) rV = 0;
-      
+
+      speedMultiplier = SwerveConstants.MinimumSpeedMultiplier + (((-driveController.getRawAxis(3) + 1)/2) * SwerveConstants.AdditionalSpeed);
+
+      xV *= speedMultiplier;
+      yV *= speedMultiplier;
+      rV *= speedMultiplier;
 
     } else {
 
@@ -81,6 +87,27 @@ public class Drive extends CommandBase {
 
     }
 
+    XboxController secondaryController = RobotContainer.xbox2;
+    rV2 = (secondaryController.getLeftTriggerAxis() - secondaryController.getRightTriggerAxis())/2;
+    if(Math.abs(rV2) < ControllerConstants.xboxDeadzone) {
+      rV2 = 0;
+    }
+
+    xV2 = ((-secondaryController.getRawAxis(0)));
+    if (Math.abs(xV2) < ControllerConstants.flickStickDeadzone) xV2 = 0;
+
+    yV2 = ((-secondaryController.getRawAxis(1)));
+    if (Math.abs(yV2) < ControllerConstants.flickStickDeadzone) yV2 = 0;
+
+    boolean usingSecondary = false;
+
+    if((xV == 0 && yV == 0 && rV == 0) && (xV2 != 0 || yV2 != 0 || rV2 != 0)) {
+      xV = xV2/3;
+      yV = yV2/3;
+      rV = rV2;
+      usingSecondary = true;
+    }
+
 
 
     
@@ -89,7 +116,7 @@ public class Drive extends CommandBase {
     SmartDashboard.putNumber("Y Velocity", yV);
     SmartDashboard.putNumber("R Velocity", rV);
 
-    if(RobotContainer.isUsingField) {
+    if(RobotContainer.isUsingField && !usingSecondary) {
       if(Config.usingFlickStick) {
         RobotContainer.swerve.DriveWithAngle(xV, yV, fX, fY);
       }

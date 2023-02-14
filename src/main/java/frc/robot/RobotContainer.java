@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 import com.kauailabs.navx.frc.AHRS;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -33,6 +35,7 @@ import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.ToggleGrip;
 import frc.robot.commands.UseField;
 import frc.robot.commands.VisionStatus;
+import frc.robot.commands.ZeroArm;
 import frc.robot.subsystems.BackLeftSwerve;
 import frc.robot.subsystems.BackRightSwerve;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -52,6 +55,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
 
+  //
+
+
   /*----- Controllers -----*/
   public static Joystick logitech3d;
   public static JoystickButton thumbButton;
@@ -70,6 +76,8 @@ public class RobotContainer {
   //xbox2
 
   public static JoystickButton xbox2A;
+  public static JoystickButton xbox2B;
+  public static JoystickButton xbox2X;
 
 
 
@@ -108,11 +116,16 @@ public class RobotContainer {
   public static boolean enableLimits = true;
   public static EnableLimts enableLimitsCommand;  
   public static Grabber grabber;
-
+  public static ZeroArm zeroArm;
   public static Compressor compressor;
   public static Grab grabCommand;
   public static ToggleGrip toggleGrip;
   public static boolean grip = false;
+
+  public static CANCoder winchCAN, pivotCAN;
+
+  public static double winchZero = 0;
+  public static double pivotZero = 0;
 
 
   
@@ -147,6 +160,8 @@ public class RobotContainer {
     //xbox controller #2
     xbox2 = new XboxController(1);
     xbox2A = new JoystickButton(xbox2, 1);
+    xbox2B = new JoystickButton(xbox2, 2);
+    xbox2X = new JoystickButton(xbox2, 3);
 
 
 
@@ -170,6 +185,8 @@ public class RobotContainer {
     cFL = new CANCoder(9);
     cBL = new CANCoder(10);
     cBR = new CANCoder(11);
+
+    navx = new AHRS(SerialPort.Port.kMXP);
 
 
     FR = new FrontRightSwerve(driveFR, steerFR, cFR);
@@ -243,6 +260,10 @@ public class RobotContainer {
     System.out.println("Compressor initated as " + compressor.getConfigType());
 
     SmartDashboard.putData("Limit Switch", enableLimitsCommand);
+    zeroArm = new ZeroArm();
+    winchCAN = new CANCoder(18); //FIXME add right numbers
+    //pivotCAN = new CANCoder(0);
+
     
     
 
@@ -269,6 +290,8 @@ public class RobotContainer {
     }
 
     xbox2A.whenPressed(toggleGrip);
+    xbox2B.whenPressed(enableLimitsCommand);
+    xbox2X.whenPressed(zeroArm);
 
   }
 
