@@ -27,5 +27,7 @@ public class FrontLeftSwerve extends SwerveUnit {
 
     SmartDashboard.putNumber("Drive Velocity",  this.driveMotorSpeed);
     SmartDashboard.putNumber("Steer Velocity", this.steerMotorSpeed);
+    SmartDashboard.putNumber("Desired Angle FL", desiredAngle);
+    SmartDashboard.putNumber("Current Angle", getRawAngle());
   }
 }
