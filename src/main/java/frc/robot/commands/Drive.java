@@ -23,7 +23,7 @@ public class Drive extends CommandBase {
   //slew rate limiters
   SlewRateLimiter xFilter = new SlewRateLimiter(3);
   SlewRateLimiter yFilter = new SlewRateLimiter(3);
-  SlewRateLimiter rFilter = new SlewRateLimiter(0);
+  SlewRateLimiter rFilter = new SlewRateLimiter(4);
 
 
 
@@ -47,20 +47,26 @@ public class Drive extends CommandBase {
     
 
    
-    //xV = xFilter.calculate(driveController.getRawAxis(0));
-   // yV = yFilter.calculate(driveController.getRawAxis(1));
-   // rV = rFilter.calculate(driveController.getRawAxis(4));
+
 
     SmartDashboard.putBoolean("Is using field", RobotContainer.isUsingField);
 
 
     if(Config.usingLogitech360) {
       Joystick driveController = RobotContainer.logitech3d;
-      xV = -driveController.getRawAxis(0);
+
+
+
+
+
+      //xV = -driveController.getRawAxis(0);
+      xV = -xFilter.calculate(driveController.getRawAxis(0));
       if (Math.abs(xV) < ControllerConstants.xboxDeadzone) xV = 0;
-      yV = -driveController.getRawAxis(1);
+      //yV = -driveController.getRawAxis(1);
+      yV = -yFilter.calculate(driveController.getRawAxis(1));
       if (Math.abs(yV) < ControllerConstants.xboxDeadzone) yV = 0;
       rV = -driveController.getRawAxis(2);
+      //rV = -rFilter.calculate(driveController.getRawAxis(2));
       if (Math.abs(rV) < ControllerConstants.xboxDeadzone) rV = 0;
 
       speedMultiplier = SwerveConstants.MinimumSpeedMultiplier + (((-driveController.getRawAxis(3) + 1)/2) * SwerveConstants.AdditionalSpeed);

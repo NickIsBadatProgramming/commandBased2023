@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
     
     RobotContainer.resetFeild.schedule();
     RobotContainer.resetOdometry.schedule();
-    //FIXME Add back in when camera is mounted CameraServer.startAutomaticCapture();
+    CameraServer.startAutomaticCapture();
   }
 
   /**
