@@ -96,10 +96,7 @@ public class SwerveUnit extends SubsystemBase {
   }
 
   public double getRawAngle() {
-    this.rawAngle = this.encoder.getAbsolutePosition() - this.zeroOffset;
-    if(this.rawAngle < 0) {
-      this.rawAngle += 360;
-    }
+    this.rawAngle = this.encoder.getAbsolutePosition();
     return this.rawAngle;
   }
 

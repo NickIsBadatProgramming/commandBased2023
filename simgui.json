@@ -1,0 +1,18 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Limit Switch": "Command",
+      "/SmartDashboard/Reset Field": "Command",
+      "/SmartDashboard/Reset Odometry": "Command",
+      "/SmartDashboard/Switch Relativity": "Command"
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "SmartDashboard": {
+        "open": true
+      }
+    }
+  }
+}

@@ -24,5 +24,6 @@ public class FrontRightSwerve extends SwerveUnit {
     SmartDashboard.putNumber("Front Right Raw Encoder Value", this.encoder.getAbsolutePosition());
     getRawAngle();
     SmartDashboard.putNumber("Front Right Encoder Zeroed Value", this.rawAngle);
+    
   }
 }

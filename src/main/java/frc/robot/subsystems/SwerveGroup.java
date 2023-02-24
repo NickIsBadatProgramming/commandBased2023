@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -238,7 +239,8 @@ public class SwerveGroup extends SubsystemBase {
   }
 
   public void resetOdometry() {
-    odometry.resetPosition(null, null, null);
+    SwerveModulePosition[] swerveModulePositions = {FR.getModulePosition(), FL.getModulePosition(), BL.getModulePosition(), BR.getModulePosition()};
+    odometry.resetPosition(Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions, new Pose2d());
   }
 
   public double getOdometryX() {
@@ -287,6 +289,8 @@ public class SwerveGroup extends SubsystemBase {
 
     SmartDashboard.putNumber("X Position", this.odometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Y Position", this.odometry.getPoseMeters().getY());
+
+
 
 
   }

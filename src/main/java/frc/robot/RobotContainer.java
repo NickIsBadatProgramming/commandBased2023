@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderStatusFrame;
+import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -21,8 +22,10 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.Drive;
@@ -186,6 +189,11 @@ public class RobotContainer {
     cBL = new CANCoder(10);
     cBR = new CANCoder(11);
 
+    cFR.configMagnetOffset(-SwerveConstants.FR_Zero);
+    cFL.configMagnetOffset(-SwerveConstants.FL_Zero);
+    cBR.configMagnetOffset(-SwerveConstants.BR_Zero);
+    cBL.configMagnetOffset(-SwerveConstants.BL_Zero);
+
     navx = new AHRS(SerialPort.Port.kMXP);
 
 
@@ -244,14 +252,11 @@ public class RobotContainer {
 
     
     pneumaticHub = new PneumaticHub(17);
-    grabberSolenoid = new DoubleSolenoid(17,PneumaticsModuleType.CTREPCM, 0, 1); //FIXME add the right channels
-    brakeSolenoid = new DoubleSolenoid(17, PneumaticsModuleType.CTREPCM, 2, 3);
+    grabberSolenoid = new DoubleSolenoid(17,PneumaticsModuleType.CTREPCM, 4, 5); //FIXME add the right channels
+    brakeSolenoid = new DoubleSolenoid(17, PneumaticsModuleType.CTREPCM, 3, 2);
     pivotMotor = new TalonFX(16);
     winchMotor = new TalonFX(15);
     enableLimitsCommand = new EnableLimts();
-    grabber = new Grabber();
-    grabCommand = new Grab();
-    toggleGrip = new ToggleGrip();
 
     pivotMotor.setNeutralMode(NeutralMode.Brake);
     winchMotor.setNeutralMode(NeutralMode.Brake);
@@ -260,9 +265,18 @@ public class RobotContainer {
     System.out.println("Compressor initated as " + compressor.getConfigType());
 
     SmartDashboard.putData("Limit Switch", enableLimitsCommand);
-    zeroArm = new ZeroArm();
     winchCAN = new CANCoder(18); //FIXME add right numbers
-    //pivotCAN = new CANCoder(0);
+    pivotCAN = new CANCoder(19);
+    winchCAN.setStatusFramePeriod(CANCoderStatusFrame.SensorData, SwerveConstants.RefreshRateEncoders);
+    pivotCAN.setStatusFramePeriod(CANCoderStatusFrame.SensorData, SwerveConstants.RefreshRateEncoders);
+    pivotCAN.configMagnetOffset(-ArmConstants.PivotOffset);
+    pivotCAN.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
+
+
+    grabber = new Grabber();
+    grabCommand = new Grab();
+    toggleGrip = new ToggleGrip();
+    zeroArm = new ZeroArm();
 
     
     

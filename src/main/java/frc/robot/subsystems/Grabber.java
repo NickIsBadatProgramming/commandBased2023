@@ -10,15 +10,19 @@
 
 package frc.robot.subsystems;
 
+import java.util.Random;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.RobotContainer;
 
 public class Grabber extends SubsystemBase {
 
@@ -27,25 +31,31 @@ public class Grabber extends SubsystemBase {
   public static DoubleSolenoid grabberSolenoid;
   public static DoubleSolenoid brakeSolenoid;
 
+  public static CANCoder winchCoder, pivotCoder;
+  public static RollingAverage winchHeight, winchExtension;
+
   public static boolean isBrake = false;
 
   
   /** Creates a new Grabber. */
   public Grabber() {
+
+    
     
     winchMotor = RobotContainer.winchMotor;
     pivotMotor = RobotContainer.pivotMotor;
     pneumaticHub = RobotContainer.pneumaticHub;
     grabberSolenoid = RobotContainer.grabberSolenoid;
     brakeSolenoid = RobotContainer.brakeSolenoid;
-  }
 
-  // public double getCurrentHeight() {
-  //   double distanceInches = 
-  // }
+    winchCoder = RobotContainer.winchCAN;
+    pivotCoder = RobotContainer.pivotCAN;
+    winchHeight = new RollingAverage(8);
+    winchExtension = new RollingAverage(8);
+  }
  
   public void pivot (double speed) { //This should be -1 or 1
-    double position = pivotMotor.getSelectedSensorPosition() - RobotContainer.pivotZero;
+    double position = getCurrentAngle();
     //speed = -speed;
 
     if(RobotContainer.enableLimits) {
@@ -81,37 +91,56 @@ public class Grabber extends SubsystemBase {
     }
   }
 
-  public void winch (double speed) { //This should be -1 or 1
+  public void winch (double speed) {
 
     speed = -speed;
-    double position = winchMotor.getSelectedSensorPosition() - RobotContainer.winchZero;
+    double position = winchCoder.getPosition(); //double position = winchMotor.getSelectedSensorPosition() - RobotContainer.winchZero;
 
     if(RobotContainer.enableLimits) {
 
       if(speed < 0) {
         if(position < ArmConstants.MinArmLength + ArmConstants.ArmLengthError) {
           winchMotor.set(ControlMode.PercentOutput, 0);
+          RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 1);
         } else {
           winchMotor.set(ControlMode.PercentOutput, speed * ArmConstants.winchSpeed);
+          RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 0);
         }
       } 
 
       if(speed > 0) {
         if(position > ArmConstants.MaxArmLength - ArmConstants.ArmLengthError) {
           winchMotor.set(ControlMode.PercentOutput, 0);
+          RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 1);
         } else {
           winchMotor.set(ControlMode.PercentOutput, speed * ArmConstants.winchSpeed);
+          RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 0);
         }
       }
 
       if(speed == 0) {
         winchMotor.set(ControlMode.PercentOutput, 0);
+        RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 0);
       }
 
     } else {
       winchMotor.set(ControlMode.PercentOutput, speed * ArmConstants.winchSpeed);
     }
 
+  }
+
+  public double getCurrentAngle() {
+    return pivotCoder.getAbsolutePosition();
+  }
+
+  public double getCurrentHeight() {
+    double distance = (winchCoder.getPosition()*ArmConstants.ticksPerInch);
+    return winchHeight.getAverage(distance * -Math.sin(pivotCoder.getAbsolutePosition()));
+  }
+
+  public double getCurrentExtension() { //Extension relative to the frame
+    double distance = (winchCoder.getPosition()*ArmConstants.ticksPerInch);
+    return winchExtension.getAverage(distance * Math.cos(pivotCoder.getAbsolutePosition()));
   }
 
   public void grab (boolean grab) {
@@ -126,9 +155,11 @@ public class Grabber extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("Compressor Enabled", RobotContainer.compressor.enabled());
-    SmartDashboard.putNumber("Winch Position", winchMotor.getSelectedSensorPosition() - RobotContainer.winchZero);
+    SmartDashboard.putBoolean("Compressor Enabled", RobotContainer.compressor.isEnabled());
+    SmartDashboard.putNumber("Winch Position", winchCoder.getPosition());
     SmartDashboard.putBoolean("Is Using Limits", RobotContainer.enableLimits);
-    SmartDashboard.putNumber("Pivot Angle", pivotMotor.getSelectedSensorPosition() - RobotContainer.pivotZero);
+    SmartDashboard.putNumber("Pivot Angle", getCurrentAngle());
+    SmartDashboard.putNumber("Winch Height", getCurrentHeight());
+    SmartDashboard.putNumber("Winch Extension", getCurrentExtension());
   }
 }

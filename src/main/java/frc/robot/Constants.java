@@ -91,26 +91,38 @@ public final class Constants {
         public static final double ArmLengthError = 10;
 
         //pivot constants
-        public static final double MaxArmPivotAngle = 161217;
-        public static final double MinArmPivotAngle = -33338;
-        public static final double PivotError = 10;
+        public static final double MaxArmPivotAngle = 160;
+        public static final double MinArmPivotAngle = -160;
+        public static final double PivotError = 5;
+        public static final double PivotOffset = 224.4;
 
         //Dimensional constraints
         public static final double MaxArmHeight = 0; //All lengths in inches
-        public static final double MinArmHeight = 0;
-        public static final double FrontMaxFrameExtension = 0;
-        public static final double BackMaxFrameExtension = 0;
-        public static final double MinArmHeightInsideFrame = 0;
-        public static final double FrameAngleBoundsFront = 0;
-        public static final double FrameAngleBountsRear = 0;
+        public static final double MinArmHeight = -2580;
+        public static final double MaxFrameExtension = 3191;
+        public static final double MinArmHeightInsideFrame = -1333;
+        public static final double FrameAngleBoundsFront = -150;
+        public static final double FrameAngleBountsRear = 150;
 
 
         public static final double pivotSpeed = 0.35;
         public static final double winchSpeed = 0.9;
 
-        public static final double ticksPerInch = 0;
+        public static final double ticksPerInch = 0.01002619;
 
         public static final double slowZone = 0.35;
+
+
+        //The arm has about 32 inches of extension it can do at level before it goes beyond it's limts or 3191 units
+        //The arm can extend up max 0 inches
+
+
+        //2 + 5/8in = 0
+        //11 in = 835.312500
+
+        //8.375in/835.3125units
+
+        //0.01002619in/unit
 
     }
 }
