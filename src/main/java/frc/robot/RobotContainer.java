@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderStatusFrame;
-import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -22,8 +21,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.Config;
@@ -252,7 +249,7 @@ public class RobotContainer {
 
     
     pneumaticHub = new PneumaticHub(17);
-    grabberSolenoid = new DoubleSolenoid(17,PneumaticsModuleType.CTREPCM, 4, 5); //FIXME add the right channels
+    grabberSolenoid = new DoubleSolenoid(17,PneumaticsModuleType.CTREPCM, 4, 5);
     brakeSolenoid = new DoubleSolenoid(17, PneumaticsModuleType.CTREPCM, 3, 2);
     pivotMotor = new TalonFX(16);
     winchMotor = new TalonFX(15);
@@ -265,7 +262,7 @@ public class RobotContainer {
     System.out.println("Compressor initated as " + compressor.getConfigType());
 
     SmartDashboard.putData("Limit Switch", enableLimitsCommand);
-    winchCAN = new CANCoder(18); //FIXME add right numbers
+    winchCAN = new CANCoder(18);
     pivotCAN = new CANCoder(19);
     winchCAN.setStatusFramePeriod(CANCoderStatusFrame.SensorData, SwerveConstants.RefreshRateEncoders);
     pivotCAN.setStatusFramePeriod(CANCoderStatusFrame.SensorData, SwerveConstants.RefreshRateEncoders);

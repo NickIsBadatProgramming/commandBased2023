@@ -77,6 +77,8 @@ public final class Constants {
         public static final int AprilTagBlueLeft = 8;
         public static final int AprilTagBlueCargoCenter = 4;
 
+        public static final String[] IntToApriltags = {"null", "Red Right", "Red Middle", "Red Left", "Blue Cargo", "Red Cargo", "Blue Right", "Blue Middle", "Blue Left"};
+
         public static final double DistanceBetweenTags = 1.6764; //meters
         public static final double DistanceToCargoCenterTag = 2.32537;
         public static final double CargoCenterTagRecess = 0.665226;
@@ -110,7 +112,7 @@ public final class Constants {
 
         public static final double ticksPerInch = 0.01002619;
 
-        public static final double slowZone = 0.35;
+        public static final double slowZone = 0.45; //For the pivot
 
 
         //The arm has about 32 inches of extension it can do at level before it goes beyond it's limts or 3191 units

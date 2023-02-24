@@ -10,8 +10,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.Random;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -87,7 +85,7 @@ public class Grabber extends SubsystemBase {
 
 
     } else {
-      pivotMotor.set(ControlMode.PercentOutput, speed * ArmConstants.winchSpeed);
+      pivotMotor.set(ControlMode.PercentOutput, speed * ArmConstants.pivotSpeed);
     }
   }
 

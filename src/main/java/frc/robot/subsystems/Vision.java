@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AutonomousConstants;
 
 public class Vision extends SubsystemBase {
 
@@ -14,7 +15,7 @@ public class Vision extends SubsystemBase {
 
   private double tx, ty, tz, az; //Translational values and angles
 
-  private double target; 
+  private float target; 
 
   //NetworkTables Stuff
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -48,6 +49,14 @@ public class Vision extends SubsystemBase {
     return this.az;
   }
 
+  public int target() {
+    return Math.round(this.target());
+  }
+
+  public String targetName () {
+    return AutonomousConstants.IntToApriltags[Math.round(this.target())];
+  }
+
 
 
   @Override
@@ -59,6 +68,6 @@ public class Vision extends SubsystemBase {
     // this.ty = array[1].doubleValue();
     // this.tz = array[2].doubleValue();
     // this.az = array[5].doubleValue();
-    // this.target = table.getEntry("tv").getDouble(0); //FIXME add back in when vision is mounted
+    // this.target = table.getEntry("tv").getFloat(0); //FIXME add back in when vision is mounted
   }
 }
