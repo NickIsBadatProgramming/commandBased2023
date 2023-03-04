@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -94,7 +95,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     RobotContainer.drive.schedule();
     RobotContainer.grabCommand.schedule();
-    //RobotContainer.status.schedule(); //FIXME add back in when vision is mounted again
+    RobotContainer.status.schedule(); 
   }
 
   @Override

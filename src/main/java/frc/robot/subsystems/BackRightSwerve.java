@@ -22,7 +22,5 @@ public class BackRightSwerve extends SwerveUnit {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Back Right Raw Encoder Value", this.encoder.getAbsolutePosition());
-    getRawAngle();
-    SmartDashboard.putNumber("Back Right Encoder Zeroed Value", this.rawAngle);
   }
 }

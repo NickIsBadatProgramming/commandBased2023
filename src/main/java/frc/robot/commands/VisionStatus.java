@@ -17,16 +17,20 @@ public class VisionStatus extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    System.out.println("Vision command executed");
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
     SmartDashboard.putBoolean("Target Detected", RobotContainer.vision.isTarget());
 
     SmartDashboard.putNumber("X Translation", RobotContainer.vision.tx());
     SmartDashboard.putNumber("Y Translation", RobotContainer.vision.ty());
     SmartDashboard.putNumber("Z Translation", RobotContainer.vision.tz());
+    SmartDashboard.putNumber("Target Tag", RobotContainer.vision.target());
   }
 
   // Called once the command ends or is interrupted.

@@ -22,13 +22,6 @@ public class FrontLeftSwerve extends SwerveUnit {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Front Left Raw Encoder Value", this.encoder.getAbsolutePosition());
-    getRawAngle();
-    SmartDashboard.putNumber("Front Left Encoder Zeroed Value", this.rawAngle);
-
-    SmartDashboard.putNumber("Drive Velocity",  this.driveMotorSpeed);
-    SmartDashboard.putNumber("Steer Velocity", this.steerMotorSpeed);
-
-    SmartDashboard.putNumber("FL distance" , getModulePosition().distanceMeters);
     
   }
 }

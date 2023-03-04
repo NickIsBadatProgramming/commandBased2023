@@ -23,7 +23,7 @@ public final class Constants {
         
         public static final double AdditionalTurnSpeed = 0.28; //additional speed of the motor 180 degrees from the target angle
         public static final double MinModuleTurnSpeed = 0.07;
-        public static final double SpeedMultiplier = 0.7; //Forward Speed
+        public static final double SpeedMultiplier = 0.9; //Forward Speed
         public static final double MinimumSpeedMultiplier = 0.2; //Minimum forward speed multiplier
         public static final double AdditionalSpeed = 1 - MinimumSpeedMultiplier;
 
@@ -43,15 +43,15 @@ public final class Constants {
 
         //Swerve Zeroes
 
-        public static final double FR_Zero = 357.1;
-        public static final double FL_Zero = 173.6;
-        public static final double BL_Zero = 183.3;
-        public static final double BR_Zero = 216.7;
+        public static final double FR_Zero = 353;
+        public static final double FL_Zero = 172;
+        public static final double BL_Zero = 181;
+        public static final double BR_Zero = 219;
 
 
         //Autonomous Variables
-        public static final double basePathSpeed = 0.3;
-        public static final double nearPathSpeed = 0.15;
+        public static final double basePathSpeed = 0.15;
+        public static final double nearPathSpeed = 0.1;
         public static final double distanceBeforeSlow = 0.1;
         public static final double error = 0.05;
 
@@ -64,7 +64,7 @@ public final class Constants {
 
     public static final class Config {
         public static final boolean usingFlickStick = false;
-        public static final boolean usingLogitech360 = true;
+        public static final boolean usingLogitech360 = false;
     }
     public static final class AutonomousConstants {
         public static final int AprilTagRedRight = 1; //As viewed from the opposite of the field 
@@ -83,28 +83,34 @@ public final class Constants {
         public static final double DistanceToCargoCenterTag = 2.32537;
         public static final double CargoCenterTagRecess = 0.665226;
 
+        public static final double limelightXOffset = 0;
+        public static final double limelightYOffset = 0;
+        public static final double limelightZOffset = 0;
+
+
 
     }
     public static final class ArmConstants {
 
 
-        public static final double MaxArmLength = 374267; 
+        public static final double MaxArmLength = 4611; 
         public static final double MinArmLength = 0;
         public static final double ArmLengthError = 10;
+        public static final double BaseArmLength = 25.5;
 
         //pivot constants
         public static final double MaxArmPivotAngle = 160;
         public static final double MinArmPivotAngle = -160;
         public static final double PivotError = 5;
-        public static final double PivotOffset = 224.4;
+        public static final double PivotOffset = 114.2;
 
         //Dimensional constraints
         public static final double MaxArmHeight = 0; //All lengths in inches
-        public static final double MinArmHeight = -2580;
+        public static final double MinArmHeight = -5;
         public static final double MaxFrameExtension = 3191;
-        public static final double MinArmHeightInsideFrame = -1333;
+        public static final double MinArmHeightInsideFrame = -5;
         public static final double FrameAngleBoundsFront = -150;
-        public static final double FrameAngleBountsRear = 150;
+        public static final double FrameAngleBoundsRear = 150;
 
 
         public static final double pivotSpeed = 0.35;

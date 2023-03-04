@@ -33,6 +33,7 @@ public class Grabber extends SubsystemBase {
   public static RollingAverage winchHeight, winchExtension;
 
   public static boolean isBrake = false;
+  public static boolean invertPivot = false;
 
   
   /** Creates a new Grabber. */
@@ -53,50 +54,54 @@ public class Grabber extends SubsystemBase {
   }
  
   public void pivot (double speed) { //This should be -1 or 1
-    double position = getCurrentAngle();
-    //speed = -speed;
+    speed = -speed;
+
+    if(getCurrentAngle() < -10 && speed == 0) {
+      invertPivot = true;
+    }
+
+    if(getCurrentAngle() > 10 && speed == 0) {
+      invertPivot = false;
+    }
+
+    if(invertPivot) {
+      speed = -speed;
+    }
 
     if(RobotContainer.enableLimits) {
 
       if(speed == 0) {
         pivotMotor.set(ControlMode.PercentOutput, 0);
-        brakeSolenoid.set(DoubleSolenoid.Value.kReverse); //Normally kForward
+        brakeSolenoid.set(DoubleSolenoid.Value.kForward); //Normally kForward
       } else {
         brakeSolenoid.set(DoubleSolenoid.Value.kReverse);
-      }
 
-      if(speed < 0) {
-        if(position < ArmConstants.MinArmPivotAngle + ArmConstants.PivotError) {
+        if(!checkCurrentPivotLimits(speed, getCurrentAngle(), getCurrentHeight())) {
           pivotMotor.set(ControlMode.PercentOutput, 0);
+          brakeSolenoid.set(DoubleSolenoid.Value.kForward);
         } else {
           pivotMotor.set(ControlMode.PercentOutput, speed * ArmConstants.pivotSpeed);
         }
       } 
 
-      if(speed > 0) {
-        if(position > ArmConstants.MaxArmPivotAngle - ArmConstants.PivotError) {
-          pivotMotor.set(ControlMode.PercentOutput, 0);
-        } else {
-          pivotMotor.set(ControlMode.PercentOutput, speed * ArmConstants.pivotSpeed);
-        }
-      }
-
-
-
-
     } else {
       pivotMotor.set(ControlMode.PercentOutput, speed * ArmConstants.pivotSpeed);
+      if(speed == 0) {
+        brakeSolenoid.set(DoubleSolenoid.Value.kForward);
+      } else {
+        brakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+      }
     }
   }
 
   public void winch (double speed) {
 
-    speed = -speed;
-    double position = winchCoder.getPosition(); //double position = winchMotor.getSelectedSensorPosition() - RobotContainer.winchZero;
+    //speed = -speed;
+    double position = -winchCoder.getPosition(); //double position = winchMotor.getSelectedSensorPosition() - RobotContainer.winchZero;
 
     if(RobotContainer.enableLimits) {
 
-      if(speed < 0) {
+      if(speed > 0) {
         if(position < ArmConstants.MinArmLength + ArmConstants.ArmLengthError) {
           winchMotor.set(ControlMode.PercentOutput, 0);
           RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 1);
@@ -106,7 +111,7 @@ public class Grabber extends SubsystemBase {
         }
       } 
 
-      if(speed > 0) {
+      if(speed < 0) {
         if(position > ArmConstants.MaxArmLength - ArmConstants.ArmLengthError) {
           winchMotor.set(ControlMode.PercentOutput, 0);
           RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 1);
@@ -126,19 +131,44 @@ public class Grabber extends SubsystemBase {
     }
 
   }
+  
+  public boolean checkCurrentPivotLimits(double speed, double angle, double height) {
+    if(speed == 0) {
+      return true;
+    }
+
+    if(speed > 0) {
+      if(angle < ArmConstants.MaxArmPivotAngle - ArmConstants.PivotError && height > ArmConstants.MinArmHeightInsideFrame) {
+        return true;
+      }
+      if(angle < ArmConstants.FrameAngleBoundsRear) {
+        return true;
+      }
+    }
+
+    if(speed < 0) {
+      if(angle > ArmConstants.MinArmPivotAngle + ArmConstants.PivotError && height > ArmConstants.MinArmHeightInsideFrame) {
+        return true;
+      }
+      if(angle > ArmConstants.FrameAngleBoundsFront) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   public double getCurrentAngle() {
     return pivotCoder.getAbsolutePosition();
   }
 
   public double getCurrentHeight() {
-    double distance = (winchCoder.getPosition()*ArmConstants.ticksPerInch);
-    return winchHeight.getAverage(distance * -Math.sin(pivotCoder.getAbsolutePosition()));
+    double distance = ((-winchCoder.getPosition()*ArmConstants.ticksPerInch) + ArmConstants.BaseArmLength);
+    return winchHeight.getAverage(distance * Math.cos(pivotCoder.getAbsolutePosition() * Math.PI/180));
   }
 
   public double getCurrentExtension() { //Extension relative to the frame
-    double distance = (winchCoder.getPosition()*ArmConstants.ticksPerInch);
-    return winchExtension.getAverage(distance * Math.cos(pivotCoder.getAbsolutePosition()));
+    double distance = ((-winchCoder.getPosition()*ArmConstants.ticksPerInch) - ArmConstants.BaseArmLength);
+    return winchExtension.getAverage(distance * Math.sin(pivotCoder.getAbsolutePosition() * Math.PI/180));
   }
 
   public void grab (boolean grab) {
@@ -154,7 +184,7 @@ public class Grabber extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("Compressor Enabled", RobotContainer.compressor.isEnabled());
-    SmartDashboard.putNumber("Winch Position", winchCoder.getPosition());
+    SmartDashboard.putNumber("Winch Position", -winchCoder.getPosition());
     SmartDashboard.putBoolean("Is Using Limits", RobotContainer.enableLimits);
     SmartDashboard.putNumber("Pivot Angle", getCurrentAngle());
     SmartDashboard.putNumber("Winch Height", getCurrentHeight());

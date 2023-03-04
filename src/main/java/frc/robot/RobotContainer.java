@@ -71,7 +71,8 @@ public class RobotContainer {
   public static XboxController xbox1, xbox2;
   public static JoystickButton xbox1SS; //Screen Share button, two rectangles
   public static JoystickButton xbox1Settings;
-  public static JoystickButton backRightPaddle;
+  public static JoystickButton rightBumper;
+  public static JoystickButton leftBumper;
 
   //xbox2
 
@@ -148,7 +149,8 @@ public class RobotContainer {
     xbox1 = new XboxController(0);
     xbox1SS = new JoystickButton(xbox1,7);
     xbox1Settings = new JoystickButton(xbox1,8);
-    backRightPaddle = new JoystickButton(xbox1,6);
+    rightBumper = new JoystickButton(xbox1,6);
+    leftBumper = new JoystickButton(xbox1, 5);
     //define all buttons on the XboxController here
 
 
@@ -208,7 +210,7 @@ public class RobotContainer {
     vision = new Vision();
     status = new VisionStatus();
     resetOdometry = new ResetOdometry();
-    driveCoordinates = new DriveCoordinates(0.6, 0, 0); //Y is (-) left and (+) right and X is (-) back to (+) front
+    driveCoordinates = new DriveCoordinates(-1, 0, 0); //Y is (-) left and (+) right and X is (-) back to (+) front
 
 
     //Configure CAN Settings
@@ -249,7 +251,7 @@ public class RobotContainer {
 
     
     pneumaticHub = new PneumaticHub(17);
-    grabberSolenoid = new DoubleSolenoid(17,PneumaticsModuleType.CTREPCM, 4, 5);
+    grabberSolenoid = new DoubleSolenoid(17,PneumaticsModuleType.CTREPCM, 5, 4);
     brakeSolenoid = new DoubleSolenoid(17, PneumaticsModuleType.CTREPCM, 3, 2);
     pivotMotor = new TalonFX(16);
     winchMotor = new TalonFX(15);
@@ -298,6 +300,7 @@ public class RobotContainer {
     } else {
       xbox1SS.onTrue(resetFeild);
       xbox1Settings.onTrue(useField);
+      leftBumper.onTrue(resetOdometry);
     }
 
     xbox2A.onTrue(toggleGrip);

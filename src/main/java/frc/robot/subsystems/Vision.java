@@ -15,7 +15,7 @@ public class Vision extends SubsystemBase {
 
   private double tx, ty, tz, az; //Translational values and angles
 
-  private float target; 
+  private long target; 
 
   //NetworkTables Stuff
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -24,7 +24,9 @@ public class Vision extends SubsystemBase {
 
 
   /** Creates a new Vision. */
-  public Vision() {}
+  public Vision() {
+    System.out.println("Vision was created");
+  }
 
   public boolean isTarget() {
     if(target == 1) {
@@ -34,40 +36,50 @@ public class Vision extends SubsystemBase {
   }
 
   public double tx() {
-    return this.tx;
+    return this.tx - AutonomousConstants.limelightXOffset;
   }
 
   public double ty() {
-    return this.ty;
+    return this.ty - AutonomousConstants.limelightYOffset;
   }
 
   public double tz() {
-    return this.tz;
+    return this.tz - AutonomousConstants.limelightZOffset;
   }
 
   public double az() {
     return this.az;
   }
 
-  public int target() {
-    return Math.round(this.target());
+  public long target() {
+    return this.target;
   }
 
   public String targetName () {
     return AutonomousConstants.IntToApriltags[Math.round(this.target())];
   }
 
+  public void update() {
+    Number[] defaultNumber = {0,0,0,0,0,0};
+    Number[] array = table.getEntry("camtran").getNumberArray(defaultNumber);
+    this.tx = array[0].doubleValue();
+    this.ty = array[1].doubleValue();
+    this.tz = array[2].doubleValue();
+    this.az = array[5].doubleValue();
+    this.target = table.getEntry("tv").getInteger(0); 
+  }
+
 
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    // Number[] defaultNumber = {0};
-    // array = table.getEntry("camtran").getNumberArray(defaultNumber);
-    // this.tx = array[0].doubleValue();
-    // this.ty = array[1].doubleValue();
-    // this.tz = array[2].doubleValue();
-    // this.az = array[5].doubleValue();
-    // this.target = table.getEntry("tv").getFloat(0); //FIXME add back in when vision is mounted
+    //This method will be called once per scheduler run
+    Number[] defaultNumber = {0,0,0,0,0,0};
+    Number[] array = table.getEntry("camtran").getNumberArray(defaultNumber);
+    this.tx = array[0].doubleValue();
+    this.ty = array[1].doubleValue();
+    this.tz = array[2].doubleValue();
+    this.az = array[5].doubleValue();
+    this.target = table.getEntry("tv").getInteger(0); 
   }
 }

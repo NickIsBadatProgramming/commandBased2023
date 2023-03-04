@@ -11,6 +11,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
 
 public class SwerveUnit extends SubsystemBase {
@@ -49,18 +50,20 @@ public class SwerveUnit extends SubsystemBase {
 
     difference = desiredAngle - getRawAngle();
 
-    if(difference < 0) {
-      difference = 0; 
+    if(difference < -180) {
+      difference += 360;
     }
-    if(difference > 90) {
-      difference = 90;
+
+    if(difference > 180) {
+      difference -= 360;
     }
 
     this.driveMotorSpeed = fv * SwerveConstants.SpeedMultiplier * ((90 - Math.abs(difference))/90); //((60 * fv)/SwerveConstants.WheelCircumferenceM) //* SwerveConstants.SWERVE_GEAR_RATIO_DRIVE;
 
     if(this.driveInverted) {
-      driveMotorSpeed *= -1;
+      this.driveMotorSpeed *= -1;
     }
+
     this.steerMotorSpeed = steerSpeed(getRawAngle(), desiredAngle);
 
     this.desiredAngle = desiredAngle;
@@ -121,7 +124,22 @@ public class SwerveUnit extends SubsystemBase {
   }
 
   public SwerveModulePosition getModulePosition() {
-    return new SwerveModulePosition(((this.driveMotor.getSelectedSensorPosition()/2048)*10) * (SwerveConstants.WheelCircumferenceM/SwerveConstants.SWERVE_GEAR_RATIO_DRIVE), Rotation2d.fromDegrees(getRawAngle()));
+    if(driveInverted) {
+      return new SwerveModulePosition(((-this.driveMotor.getSelectedSensorPosition()/2048)) * (SwerveConstants.WheelCircumferenceM/SwerveConstants.SWERVE_GEAR_RATIO_DRIVE), Rotation2d.fromDegrees(getRawAngle()));
+
+    }
+    return new SwerveModulePosition(((this.driveMotor.getSelectedSensorPosition()/2048)) * (SwerveConstants.WheelCircumferenceM/SwerveConstants.SWERVE_GEAR_RATIO_DRIVE), Rotation2d.fromDegrees(getRawAngle()));
+  }
+
+  public SwerveModulePosition getModulePosition(boolean reset) {
+    if(reset) {
+      driveMotor.setSelectedSensorPosition(0);
+    }
+    if(driveInverted) {
+      return new SwerveModulePosition(((-this.driveMotor.getSelectedSensorPosition()/2048)) * (SwerveConstants.WheelCircumferenceM/SwerveConstants.SWERVE_GEAR_RATIO_DRIVE), Rotation2d.fromDegrees(getRawAngle()));
+
+    }
+    return new SwerveModulePosition(((this.driveMotor.getSelectedSensorPosition()/2048)) * (SwerveConstants.WheelCircumferenceM/SwerveConstants.SWERVE_GEAR_RATIO_DRIVE), Rotation2d.fromDegrees(getRawAngle()));
   }
 
   public void updateMotorSpeeds() {

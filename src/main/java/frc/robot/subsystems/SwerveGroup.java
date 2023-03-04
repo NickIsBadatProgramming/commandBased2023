@@ -238,7 +238,7 @@ public class SwerveGroup extends SubsystemBase {
   }
 
   public void resetOdometry() {
-    SwerveModulePosition[] swerveModulePositions = {FR.getModulePosition(), FL.getModulePosition(), BL.getModulePosition(), BR.getModulePosition()};
+    SwerveModulePosition[] swerveModulePositions = {FR.getModulePosition(true), FL.getModulePosition(true), BL.getModulePosition(true), BR.getModulePosition(true)};
     odometry.resetPosition(Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions, new Pose2d());
   }
 
@@ -282,7 +282,7 @@ public class SwerveGroup extends SubsystemBase {
   public void periodic() {
 
     SwerveModulePosition[] swerveModulePositions = {FR.getModulePosition(), FL.getModulePosition(), BL.getModulePosition(), BR.getModulePosition()};
-    this.odometry = new SwerveDriveOdometry(kinematics, Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions);
+
 
     this.odometry.update(Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions);
 

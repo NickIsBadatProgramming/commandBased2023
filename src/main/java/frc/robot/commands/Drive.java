@@ -21,8 +21,8 @@ public class Drive extends CommandBase {
   double xV, yV, rV, fX, fY, rV2, xV2, yV2, speedMultiplier;
 
   //slew rate limiters
-  SlewRateLimiter xFilter = new SlewRateLimiter(1);
-  SlewRateLimiter yFilter = new SlewRateLimiter(1);
+  SlewRateLimiter xFilter = new SlewRateLimiter(0.8);
+  SlewRateLimiter yFilter = new SlewRateLimiter(0.8);
   SlewRateLimiter rFilter = new SlewRateLimiter(4);
 
 
@@ -78,12 +78,22 @@ public class Drive extends CommandBase {
     } else {
 
       XboxController driveController = RobotContainer.xbox1;
-      xV = -driveController.getRawAxis(0);
-      if (Math.abs(xV) < ControllerConstants.xboxDeadzone) xV = 0;
-      yV = -driveController.getRawAxis(1);
-      if (Math.abs(yV) < ControllerConstants.xboxDeadzone) yV = 0;
-      rV = -driveController.getRawAxis(4);
-      if (Math.abs(rV) < ControllerConstants.xboxDeadzone) rV = 0;
+      if (Math.abs(driveController.getRawAxis(0)) < ControllerConstants.xboxDeadzone){
+         xV = -xFilter.calculate(0);
+      } else xV = -xFilter.calculate(driveController.getRawAxis(0));
+
+      if (Math.abs(driveController.getRawAxis(1)) < ControllerConstants.xboxDeadzone) {
+        yV = -yFilter.calculate(0);
+      } else yV = -yFilter.calculate(driveController.getRawAxis(1));
+
+      if (Math.abs(driveController.getRawAxis(4)) < ControllerConstants.xboxDeadzone) {
+        rV = -rFilter.calculate(0);
+      } else rV = -rFilter.calculate(driveController.getRawAxis(4));
+
+      if(RobotContainer.rightBumper.getAsBoolean()) {
+        xV /= SwerveConstants.SlowMode;
+        yV /= SwerveConstants.SlowMode;
+      }
 
       //flick stick stuff
       fX = driveController.getRawAxis(4);
