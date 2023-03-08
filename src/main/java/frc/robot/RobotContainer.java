@@ -34,7 +34,6 @@ import frc.robot.commands.ResetFeild;
 import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.ToggleGrip;
 import frc.robot.commands.UseField;
-import frc.robot.commands.VisionStatus;
 import frc.robot.commands.ZeroArm;
 import frc.robot.subsystems.BackLeftSwerve;
 import frc.robot.subsystems.BackRightSwerve;
@@ -73,6 +72,7 @@ public class RobotContainer {
   public static JoystickButton xbox1Settings;
   public static JoystickButton rightBumper;
   public static JoystickButton leftBumper;
+  public static JoystickButton xbox1Y;
 
   //xbox2
 
@@ -103,7 +103,6 @@ public class RobotContainer {
   public static ResetFeild resetFeild;
   public static UseField useField;
   public static Vision vision;
-  public static VisionStatus status;
   public static ResetOdometry resetOdometry;
   public static DriveCoordinates driveCoordinates;
 
@@ -151,6 +150,7 @@ public class RobotContainer {
     xbox1Settings = new JoystickButton(xbox1,8);
     rightBumper = new JoystickButton(xbox1,6);
     leftBumper = new JoystickButton(xbox1, 5);
+    xbox1Y = new JoystickButton(xbox1, 4);
     //define all buttons on the XboxController here
 
 
@@ -208,9 +208,8 @@ public class RobotContainer {
     resetFeild = new ResetFeild();
     useField = new UseField();
     vision = new Vision();
-    status = new VisionStatus();
     resetOdometry = new ResetOdometry();
-    driveCoordinates = new DriveCoordinates(-1, 0, 0); //Y is (-) left and (+) right and X is (-) back to (+) front
+    driveCoordinates = new DriveCoordinates(0, 0.5, 0); //X is (-) left and (+) right and Y is (-) back to (+) front
 
 
     //Configure CAN Settings
@@ -306,6 +305,9 @@ public class RobotContainer {
     xbox2A.onTrue(toggleGrip);
     xbox2B.onTrue(enableLimitsCommand);
     xbox2X.onTrue(zeroArm);
+
+    swerve.setDefaultCommand(drive);
+    grabber.setDefaultCommand(grabCommand);
 
   }
 

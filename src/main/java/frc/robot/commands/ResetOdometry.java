@@ -28,9 +28,9 @@ public class ResetOdometry extends CommandBase {
   @Override
   public void end(boolean interrupted) {}
 
-  // Returns true when the command should end.
+  // Returns true when the command should end.0
   @Override
   public boolean isFinished() {
-    return false;
+    return (RobotContainer.swerve.getOdometryX() == 0 && RobotContainer.swerve.getOdometryY() == 0);
   }
 }

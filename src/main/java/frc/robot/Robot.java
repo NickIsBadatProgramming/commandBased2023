@@ -4,10 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -31,10 +28,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    
-    RobotContainer.resetFeild.schedule();
-    RobotContainer.resetOdometry.schedule();
-    CameraServer.startAutomaticCapture();
+    RobotContainer.swerve.getNavX().zeroYaw();
+    RobotContainer.swerve.resetOdometry();
   }
 
   /**
@@ -51,11 +46,22 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    try {
+      RobotContainer.grabber.logLastKnownWinchPosition();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    try {
+      RobotContainer.grabber.logLastKnownWinchPosition();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -63,7 +69,8 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-
+    // RobotContainer.navx.zeroYaw();
+    // RobotContainer.swerve.resetOdometry();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -87,15 +94,12 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    RobotContainer.resetFeild.schedule();
+    RobotContainer.navx.zeroYaw();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    RobotContainer.drive.schedule();
-    RobotContainer.grabCommand.schedule();
-    RobotContainer.status.schedule(); 
   }
 
   @Override

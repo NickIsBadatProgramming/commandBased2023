@@ -10,6 +10,12 @@
 
 package frc.robot.subsystems;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -51,6 +57,21 @@ public class Grabber extends SubsystemBase {
     pivotCoder = RobotContainer.pivotCAN;
     winchHeight = new RollingAverage(8);
     winchExtension = new RollingAverage(8);
+    
+    File winchPositionLogger = new File("winchDump.txt");
+    if(winchPositionLogger.exists()) {
+      try (Scanner myScanner = new Scanner(winchPositionLogger)) {
+        winchCoder.setPosition(myScanner.nextDouble());
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      }
+    } else {
+      try {
+        winchPositionLogger.createNewFile();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
   }
  
   public void pivot (double speed) { //This should be -1 or 1
@@ -84,6 +105,8 @@ public class Grabber extends SubsystemBase {
         }
       } 
 
+
+
     } else {
       pivotMotor.set(ControlMode.PercentOutput, speed * ArmConstants.pivotSpeed);
       if(speed == 0) {
@@ -92,6 +115,13 @@ public class Grabber extends SubsystemBase {
         brakeSolenoid.set(DoubleSolenoid.Value.kReverse);
       }
     }
+  }
+
+  public void logLastKnownWinchPosition() throws Exception {
+    File winchPositionLogger = new File("winchDump.txt");
+    FileWriter myFileWriter = new FileWriter(winchPositionLogger);
+    myFileWriter.write(String.valueOf(winchCoder.getPosition()));
+    myFileWriter.close();
   }
 
   public void winch (double speed) {
@@ -131,6 +161,29 @@ public class Grabber extends SubsystemBase {
     }
 
   }
+
+  // public boolean retainWinchLimits(double winchArmPosition, double winchAngle, double pivotVelocity, double winchSpeed) {
+  //   if(winchSpeed > 0) {
+  //     if(winchArmPosition < ArmConstants.MinArmLength + ArmConstants.ArmLengthError) {
+  //       RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 1);
+  //       return false;
+  //     } else {
+  //       RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 0);
+  //       if()
+  //     }
+  //   } 
+
+  //   if(winchSpeed < 0) {
+  //     if(winchArmPosition > ArmConstants.MaxArmLength - ArmConstants.ArmLengthError) {
+  //       RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 1);
+  //       return false;
+  //     } else {
+  //       RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 0);
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // }
   
   public boolean checkCurrentPivotLimits(double speed, double angle, double height) {
     if(speed == 0) {
@@ -161,12 +214,13 @@ public class Grabber extends SubsystemBase {
     return pivotCoder.getAbsolutePosition();
   }
 
-  public double getCurrentHeight() {
+  public double getCurrentHeight() {//Height relative to the pivot in inches
     double distance = ((-winchCoder.getPosition()*ArmConstants.ticksPerInch) + ArmConstants.BaseArmLength);
+    SmartDashboard.putNumber("Winch Distance", distance);
     return winchHeight.getAverage(distance * Math.cos(pivotCoder.getAbsolutePosition() * Math.PI/180));
   }
 
-  public double getCurrentExtension() { //Extension relative to the frame
+  public double getCurrentExtension() { //Extension relative to the frame in inches
     double distance = ((-winchCoder.getPosition()*ArmConstants.ticksPerInch) - ArmConstants.BaseArmLength);
     return winchExtension.getAverage(distance * Math.sin(pivotCoder.getAbsolutePosition() * Math.PI/180));
   }

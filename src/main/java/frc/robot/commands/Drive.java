@@ -21,8 +21,8 @@ public class Drive extends CommandBase {
   double xV, yV, rV, fX, fY, rV2, xV2, yV2, speedMultiplier;
 
   //slew rate limiters
-  SlewRateLimiter xFilter = new SlewRateLimiter(0.8);
-  SlewRateLimiter yFilter = new SlewRateLimiter(0.8);
+  SlewRateLimiter xFilter = new SlewRateLimiter(1.4);
+  SlewRateLimiter yFilter = new SlewRateLimiter(1.4);
   SlewRateLimiter rFilter = new SlewRateLimiter(4);
 
 

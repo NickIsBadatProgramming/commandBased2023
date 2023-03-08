@@ -38,6 +38,7 @@ public class SwerveGroup extends SubsystemBase {
 
   static TalonFX frontRightD, frontLeftD, backLeftD, backRightD;
   AHRS navx;
+  Pose2d pose;
 
   private SwerveDriveKinematics kinematics;
   private SwerveDriveOdometry odometry;
@@ -63,6 +64,7 @@ public class SwerveGroup extends SubsystemBase {
     backRightD = RobotContainer.driveBR;
 
     navx = RobotContainer.navx;
+    pose = new Pose2d();
 
 
     Translation2d m_frontRight = new Translation2d(SwerveConstants.TrackwidthM/2,-SwerveConstants.WheelbaseM/2); //Making 2D translations from the center of the robot to the swerve modules
@@ -229,8 +231,26 @@ public class SwerveGroup extends SubsystemBase {
       BL.move(backLeftOptimized.speedMetersPerSecond, backLeftOptimized.angle.getDegrees());
       BR.move(backRightOptimized.speedMetersPerSecond, backRightOptimized.angle.getDegrees());
 
-      SmartDashboard.putNumber("NavX Angle", -navx.getYaw());
+
     }
+  }
+
+  public void DriveChassisStates(ChassisSpeeds speeds) {
+    SwerveModuleState[] moduleStates = this.kinematics.toSwerveModuleStates(speeds);
+
+    SwerveModuleState frontRight = moduleStates[0];
+    SwerveModuleState frontRightOptimized = SwerveModuleState.optimize(frontRight, Rotation2d.fromDegrees(FR.getRawAngle()));
+    SwerveModuleState frontLeft = moduleStates[1];
+    SwerveModuleState frontLeftOptimized = SwerveModuleState.optimize(frontLeft, Rotation2d.fromDegrees(FL.getRawAngle()));
+    SwerveModuleState backLeft = moduleStates[2];
+    SwerveModuleState backLeftOptimized = SwerveModuleState.optimize(backLeft, Rotation2d.fromDegrees(BL.getRawAngle()));
+    SwerveModuleState backRight = moduleStates[3];
+    SwerveModuleState backRightOptimized = SwerveModuleState.optimize(backRight, Rotation2d.fromDegrees(BR.getRawAngle()));
+
+    FL.move(frontLeftOptimized.speedMetersPerSecond, frontLeftOptimized.angle.getDegrees());
+    FR.move(frontRightOptimized.speedMetersPerSecond, frontRightOptimized.angle.getDegrees());
+    BL.move(backLeftOptimized.speedMetersPerSecond, backLeftOptimized.angle.getDegrees());
+    BR.move(backRightOptimized.speedMetersPerSecond, backRightOptimized.angle.getDegrees());
   }
 
   public AHRS getNavX() { //for commands 
@@ -242,11 +262,19 @@ public class SwerveGroup extends SubsystemBase {
     odometry.resetPosition(Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions, new Pose2d());
   }
 
+  public void resetOdometry(Pose2d pose) {
+    SwerveModulePosition[] swerveModulePositions = {FR.getModulePosition(true), FL.getModulePosition(true), BL.getModulePosition(true), BR.getModulePosition(true)};
+    odometry.resetPosition(Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions, pose);
+  }
+
   public double getOdometryX() {
     return this.odometry.getPoseMeters().getX();
   }
   public double getOdometryY() {
     return this.odometry.getPoseMeters().getY();
+  }
+  public Pose2d getPose() {
+    return this.pose;
   }
 
   public void CustomDrive(double x, double y, double r) { //Deprecated
@@ -285,12 +313,10 @@ public class SwerveGroup extends SubsystemBase {
 
 
     this.odometry.update(Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions);
+    pose = this.odometry.getPoseMeters();
 
     SmartDashboard.putNumber("X Position", this.odometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Y Position", this.odometry.getPoseMeters().getY());
-
-
-
-
+    SmartDashboard.putNumber("NavX Angle", -navx.getYaw());
   }
 }

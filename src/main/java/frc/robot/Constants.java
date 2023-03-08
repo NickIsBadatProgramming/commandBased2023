@@ -83,9 +83,10 @@ public final class Constants {
         public static final double DistanceToCargoCenterTag = 2.32537;
         public static final double CargoCenterTagRecess = 0.665226;
 
-        public static final double limelightXOffset = 0;
-        public static final double limelightYOffset = 0;
-        public static final double limelightZOffset = 0;
+        public static final double limelightXOffset = 0.36;
+        public static final double limelightYOffset = 0.15;
+        public static final double limelightZOffset = 0.72; //Robot is .14m away from apriltag at this distance, any farther and it will clip out of frame
+        
 
 
 
@@ -107,7 +108,7 @@ public final class Constants {
         //Dimensional constraints
         public static final double MaxArmHeight = 0; //All lengths in inches
         public static final double MinArmHeight = -5;
-        public static final double MaxFrameExtension = 3191;
+        public static final double MaxFrameExtension = 32;
         public static final double MinArmHeightInsideFrame = -5;
         public static final double FrameAngleBoundsFront = -150;
         public static final double FrameAngleBoundsRear = 150;
