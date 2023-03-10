@@ -31,6 +31,6 @@ public class ResetOdometry extends CommandBase {
   // Returns true when the command should end.0
   @Override
   public boolean isFinished() {
-    return (RobotContainer.swerve.getOdometryX() == 0 && RobotContainer.swerve.getOdometryY() == 0);
+    return (Math.abs(RobotContainer.swerve.getOdometryX()) <= 0.1 && Math.abs(RobotContainer.swerve.getOdometryY()) <= 0.1);
   }
 }

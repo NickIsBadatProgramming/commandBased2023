@@ -251,6 +251,11 @@ public class SwerveGroup extends SubsystemBase {
     FR.move(frontRightOptimized.speedMetersPerSecond, frontRightOptimized.angle.getDegrees());
     BL.move(backLeftOptimized.speedMetersPerSecond, backLeftOptimized.angle.getDegrees());
     BR.move(backRightOptimized.speedMetersPerSecond, backRightOptimized.angle.getDegrees());
+
+    FL.updateMotorSpeeds();
+    FR.updateMotorSpeeds();
+    BL.updateMotorSpeeds();
+    BR.updateMotorSpeeds();
   }
 
   public AHRS getNavX() { //for commands 
@@ -258,6 +263,10 @@ public class SwerveGroup extends SubsystemBase {
   }
 
   public void resetOdometry() {
+    FR.getModulePosition(true);
+    FL.getModulePosition(true);
+    BL.getModulePosition(true);
+    BR.getModulePosition(true);
     SwerveModulePosition[] swerveModulePositions = {FR.getModulePosition(true), FL.getModulePosition(true), BL.getModulePosition(true), BR.getModulePosition(true)};
     odometry.resetPosition(Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions, new Pose2d());
   }

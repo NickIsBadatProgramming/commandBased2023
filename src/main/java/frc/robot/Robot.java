@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.server.PathPlannerServer;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -30,6 +33,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     RobotContainer.swerve.getNavX().zeroYaw();
     RobotContainer.swerve.resetOdometry();
+    PathPlannerServer.startServer(5811);
   }
 
   /**
@@ -46,21 +50,11 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    try {
-      RobotContainer.grabber.logLastKnownWinchPosition();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    try {
-      RobotContainer.grabber.logLastKnownWinchPosition();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   @Override
@@ -69,13 +63,16 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // RobotContainer.navx.zeroYaw();
-    // RobotContainer.swerve.resetOdometry();
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
+
+      RobotContainer.swerve.getNavX().zeroYaw();
+      RobotContainer.swerve.resetOdometry();
       m_autonomousCommand.schedule();
+      
     }
   }
 

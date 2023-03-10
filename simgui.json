@@ -2,6 +2,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Chooser": "String Chooser",
       "/SmartDashboard/Limit Switch": "Command",
       "/SmartDashboard/Reset Field": "Command",
       "/SmartDashboard/Reset Odometry": "Command",

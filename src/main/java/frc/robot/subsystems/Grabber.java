@@ -58,20 +58,20 @@ public class Grabber extends SubsystemBase {
     winchHeight = new RollingAverage(8);
     winchExtension = new RollingAverage(8);
     
-    File winchPositionLogger = new File("winchDump.txt");
-    if(winchPositionLogger.exists()) {
-      try (Scanner myScanner = new Scanner(winchPositionLogger)) {
-        winchCoder.setPosition(myScanner.nextDouble());
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      }
-    } else {
-      try {
-        winchPositionLogger.createNewFile();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
+    // File winchPositionLogger = new File("winchDump.txt");
+    // if(winchPositionLogger.exists()) {
+    //   try (Scanner myScanner = new Scanner(winchPositionLogger)) {
+    //     winchCoder.setPosition(myScanner.nextDouble());
+    //   } catch (FileNotFoundException e) {
+    //     e.printStackTrace();
+    //   }
+    // } else {
+    //   try {
+    //     winchPositionLogger.createNewFile();
+    //   } catch (IOException e) {
+    //     e.printStackTrace();
+    //   }
+    // }
   }
  
   public void pivot (double speed) { //This should be -1 or 1

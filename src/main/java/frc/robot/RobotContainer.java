@@ -35,6 +35,7 @@ import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.ToggleGrip;
 import frc.robot.commands.UseField;
 import frc.robot.commands.ZeroArm;
+import frc.robot.subsystems.AutoManager;
 import frc.robot.subsystems.BackLeftSwerve;
 import frc.robot.subsystems.BackRightSwerve;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -126,6 +127,9 @@ public class RobotContainer {
 
   public static double winchZero = 0;
   public static double pivotZero = 0;
+
+  //Autonomous 
+  public static AutoManager autoManager;
 
 
   
@@ -250,8 +254,8 @@ public class RobotContainer {
 
     
     pneumaticHub = new PneumaticHub(17);
-    grabberSolenoid = new DoubleSolenoid(17,PneumaticsModuleType.CTREPCM, 5, 4);
-    brakeSolenoid = new DoubleSolenoid(17, PneumaticsModuleType.CTREPCM, 3, 2);
+    grabberSolenoid = new DoubleSolenoid(17,PneumaticsModuleType.CTREPCM, 0, 1);
+    brakeSolenoid = new DoubleSolenoid(17, PneumaticsModuleType.CTREPCM, 2, 3);
     pivotMotor = new TalonFX(16);
     winchMotor = new TalonFX(15);
     enableLimitsCommand = new EnableLimts();
@@ -275,6 +279,10 @@ public class RobotContainer {
     grabCommand = new Grab();
     toggleGrip = new ToggleGrip();
     zeroArm = new ZeroArm();
+
+    //Auto
+
+    autoManager = new AutoManager();
 
     
     
@@ -321,6 +329,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return driveCoordinates;
+    return autoManager.getAuto();
   }
 }

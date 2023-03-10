@@ -133,6 +133,9 @@ public class SwerveUnit extends SubsystemBase {
   public SwerveModulePosition getModulePosition(boolean reset) {
     if(reset) {
       driveMotor.setSelectedSensorPosition(0);
+      driveMotor.setSelectedSensorPosition(0);
+      driveMotor.setSelectedSensorPosition(0);
+      return new SwerveModulePosition(0, Rotation2d.fromDegrees(getRawAngle()));
     }
     if(driveInverted) {
       return new SwerveModulePosition(((-this.driveMotor.getSelectedSensorPosition()/2048)) * (SwerveConstants.WheelCircumferenceM/SwerveConstants.SWERVE_GEAR_RATIO_DRIVE), Rotation2d.fromDegrees(getRawAngle()));
