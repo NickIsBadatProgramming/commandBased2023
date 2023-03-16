@@ -29,7 +29,7 @@ public class Vision extends SubsystemBase {
   }
 
   public boolean isTarget() {
-    if(target != -1) {
+    if(target != -1 && target != 0) {
       return true;
     }
     return false;
@@ -48,7 +48,7 @@ public class Vision extends SubsystemBase {
   }
 
   public double az() {
-    return this.az;
+    return this.az - AutonomousConstants.limelightAZOffset;
   }
 
   public float target() {
@@ -88,16 +88,17 @@ public class Vision extends SubsystemBase {
     this.tz = -array[2].doubleValue();
     this.az = array[5].doubleValue();
 
-    this.target = table.getEntry("tid").getFloat(0);
+    this.target = table.getEntry("tid").getFloat(-1);
 
 
 
-    SmartDashboard.putBoolean("Target Detected", isTarget());
+    // SmartDashboard.putBoolean("Target Detected", isTarget());
 
     SmartDashboard.putNumber("X Translation", tx());
     SmartDashboard.putNumber("Y Translation", ty());
     SmartDashboard.putNumber("Z Translation", tz());
     SmartDashboard.putNumber("Z Angle", az());
     SmartDashboard.putNumber("Target Tag", target());
+    SmartDashboard.putBoolean("Is Target", isTarget());
   }
 }

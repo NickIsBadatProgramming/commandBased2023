@@ -26,9 +26,9 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.Drive;
-import frc.robot.commands.DriveCoordinates;
 import frc.robot.commands.EnableLimts;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.GetToRamp;
 import frc.robot.commands.Grab;
 import frc.robot.commands.ResetFeild;
 import frc.robot.commands.ResetOdometry;
@@ -105,7 +105,6 @@ public class RobotContainer {
   public static UseField useField;
   public static Vision vision;
   public static ResetOdometry resetOdometry;
-  public static DriveCoordinates driveCoordinates;
 
 
   /*----- Gripper Components -----*/ 
@@ -120,16 +119,18 @@ public class RobotContainer {
   public static ZeroArm zeroArm;
   public static Compressor compressor;
   public static Grab grabCommand;
-  public static ToggleGrip toggleGrip;
-  public static boolean grip = false;
+  public static boolean grip = true;
 
   public static CANCoder winchCAN, pivotCAN;
 
   public static double winchZero = 0;
   public static double pivotZero = 0;
+  //public static Solenoid LEDs;
 
   //Autonomous 
   public static AutoManager autoManager;
+  public static GetToRamp getToRamp;
+  // public static VictorSPX LEDs;
 
 
   
@@ -213,7 +214,6 @@ public class RobotContainer {
     useField = new UseField();
     vision = new Vision();
     resetOdometry = new ResetOdometry();
-    driveCoordinates = new DriveCoordinates(0, 0.5, 0); //X is (-) left and (+) right and Y is (-) back to (+) front
 
 
     //Configure CAN Settings
@@ -254,8 +254,8 @@ public class RobotContainer {
 
     
     pneumaticHub = new PneumaticHub(17);
-    grabberSolenoid = new DoubleSolenoid(17,PneumaticsModuleType.CTREPCM, 0, 1);
-    brakeSolenoid = new DoubleSolenoid(17, PneumaticsModuleType.CTREPCM, 2, 3);
+    grabberSolenoid = new DoubleSolenoid(17,PneumaticsModuleType.CTREPCM, 0, 3);
+    brakeSolenoid = new DoubleSolenoid(17, PneumaticsModuleType.CTREPCM, 1, 4);
     pivotMotor = new TalonFX(16);
     winchMotor = new TalonFX(15);
     enableLimitsCommand = new EnableLimts();
@@ -277,12 +277,16 @@ public class RobotContainer {
 
     grabber = new Grabber();
     grabCommand = new Grab();
-    toggleGrip = new ToggleGrip();
     zeroArm = new ZeroArm();
 
     //Auto
 
     autoManager = new AutoManager();
+    getToRamp = new GetToRamp();
+    // LEDs = new Solenoid(PneumaticsModuleType.CTREPCM, 6);
+    // LEDs.set(false);
+    // LEDs = new VictorSPX(20);
+    // LEDs.set(ControlMode.PercentOutput, 0.8);
 
     
     
@@ -310,7 +314,7 @@ public class RobotContainer {
       leftBumper.onTrue(resetOdometry);
     }
 
-    xbox2A.onTrue(toggleGrip);
+    xbox2A.onTrue(new ToggleGrip());
     xbox2B.onTrue(enableLimitsCommand);
     xbox2X.onTrue(zeroArm);
 
@@ -329,6 +333,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
+    //return autoManager.getAuto();
     return autoManager.getAuto();
   }
 }

@@ -4,43 +4,38 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.AutonomousConstants;
 
-public class ToggleGrip extends CommandBase {
-  /** Creates a new ToggleGrip. */
-  public ToggleGrip() {
+public class GetToRamp extends CommandBase {
+
+  boolean hasCrossedThreshhold = false;
+  AHRS navx;
+
+
+  /** Creates a new GetToRamp. */
+  public GetToRamp() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.grabber);
+    addRequirements(RobotContainer.swerve);
+    navx = RobotContainer.swerve.getNavX();
   }
-
-  boolean isFinished = false;
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.grip = !RobotContainer.grip;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(RobotContainer.grip) {
-      RobotContainer.grabber.grabberSolenoid.set(DoubleSolenoid.Value.kForward);
-    } else {
-      RobotContainer.grabber.grabberSolenoid.set(DoubleSolenoid.Value.kReverse);
+    RobotContainer.swerve.DriveField(0, -0.3, 0);
+    if(navx.getRoll() < AutonomousConstants.rampAngleEntryThreshhold) {
+      hasCrossedThreshhold = true;
+      RobotContainer.swerve.DriveField(0, 0, 0);
     }
-
-    if(RobotContainer.grip && RobotContainer.grabberSolenoid.get() == DoubleSolenoid.Value.kForward ) {
-      isFinished = true;
-    }
-
-    if(!RobotContainer.grip && RobotContainer.grabberSolenoid.get() == DoubleSolenoid.Value.kReverse ) {
-      isFinished = true;
-    }
-
-
   }
 
   // Called once the command ends or is interrupted.
@@ -50,6 +45,9 @@ public class ToggleGrip extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isFinished;
+    if(navx.getRoll() > AutonomousConstants.rampAngleExitThreshhold && hasCrossedThreshhold) {
+      return true;
+    }
+    return false;
   }
 }

@@ -11,11 +11,7 @@
 package frc.robot.subsystems;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -32,7 +28,7 @@ public class Grabber extends SubsystemBase {
 
   public static TalonFX winchMotor, pivotMotor;
   public static PneumaticHub pneumaticHub;
-  public static DoubleSolenoid grabberSolenoid;
+  public DoubleSolenoid grabberSolenoid;
   public static DoubleSolenoid brakeSolenoid;
 
   public static CANCoder winchCoder, pivotCoder;
@@ -127,7 +123,7 @@ public class Grabber extends SubsystemBase {
   public void winch (double speed) {
 
     //speed = -speed;
-    double position = -winchCoder.getPosition(); //double position = winchMotor.getSelectedSensorPosition() - RobotContainer.winchZero;
+    double position = getCurrentLength(); //double position = winchMotor.getSelectedSensorPosition() - RobotContainer.winchZero;
 
     if(RobotContainer.enableLimits) {
 
@@ -136,7 +132,7 @@ public class Grabber extends SubsystemBase {
           winchMotor.set(ControlMode.PercentOutput, 0);
           RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 1);
         } else {
-          winchMotor.set(ControlMode.PercentOutput, speed * ArmConstants.winchSpeed);
+          winchMotor.set(ControlMode.PercentOutput, -speed * ArmConstants.winchSpeed);
           RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 0);
         }
       } 
@@ -146,7 +142,7 @@ public class Grabber extends SubsystemBase {
           winchMotor.set(ControlMode.PercentOutput, 0);
           RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 1);
         } else {
-          winchMotor.set(ControlMode.PercentOutput, speed * ArmConstants.winchSpeed);
+          winchMotor.set(ControlMode.PercentOutput, -speed * ArmConstants.winchSpeed);
           RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 0);
         }
       }
@@ -157,9 +153,41 @@ public class Grabber extends SubsystemBase {
       }
 
     } else {
-      winchMotor.set(ControlMode.PercentOutput, speed * ArmConstants.winchSpeed);
+      winchMotor.set(ControlMode.PercentOutput, -speed * ArmConstants.winchSpeed);
     }
 
+  }
+
+  public Boolean getToPosition(double pivotAngle, double armExtension) {
+    double pivotDifference = pivotAngle - getCurrentAngle();
+    double extensionDifference = armExtension - getCurrentLength();
+
+    SmartDashboard.putNumber("Extension Difference", extensionDifference);
+    SmartDashboard.putNumber("Pivot Difference", pivotDifference);
+
+    double pivotSpeed = (Math.abs(pivotDifference)/pivotDifference) * (ArmConstants.pivotMinSpeed + (Math.abs(pivotDifference/90) * ArmConstants.pivotAdditionalSpeed));
+    double extensionSpeed = (Math.abs(extensionDifference)/extensionDifference) * ((ArmConstants.winchMinSpeed) + (Math.abs((extensionDifference * ArmConstants.ticksPerInch)/36) * ArmConstants.winchAdditionalSpeed));
+
+    if(pivotAngle <= ArmConstants.MaxArmPivotAngle && pivotAngle > ArmConstants.MinArmPivotAngle && Math.abs(pivotDifference) >= ArmConstants.pivotError){
+      pivotMotor.set(ControlMode.PercentOutput, pivotSpeed);
+      brakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+    } else {
+      pivotMotor.set(ControlMode.PercentOutput, 0);
+      brakeSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+
+
+    if(armExtension <= ArmConstants.MaxArmLength && armExtension >= 0 && Math.abs(extensionDifference) > ArmConstants.winchError){
+      winchMotor.set(ControlMode.PercentOutput, extensionSpeed);
+    } else {
+      winchMotor.set(ControlMode.PercentOutput, 0);
+    }
+
+    if(Math.abs(pivotDifference) < ArmConstants.pivotError && Math.abs(extensionDifference) < ArmConstants.winchError) {
+      return true;
+    }
+
+    return false;
   }
 
   // public boolean retainWinchLimits(double winchArmPosition, double winchAngle, double pivotVelocity, double winchSpeed) {
@@ -214,34 +242,38 @@ public class Grabber extends SubsystemBase {
     return pivotCoder.getAbsolutePosition();
   }
 
+  public double getCurrentLength() {
+    return winchCoder.getPosition();
+  }
+
   public double getCurrentHeight() {//Height relative to the pivot in inches
-    double distance = ((-winchCoder.getPosition()*ArmConstants.ticksPerInch) + ArmConstants.BaseArmLength);
-    SmartDashboard.putNumber("Winch Distance", distance);
+    double distance = ((getCurrentLength()*ArmConstants.ticksPerInch) + ArmConstants.BaseArmLength);
+    // SmartDashboard.putNumber("Winch Distance", distance);
     return winchHeight.getAverage(distance * Math.cos(pivotCoder.getAbsolutePosition() * Math.PI/180));
   }
 
   public double getCurrentExtension() { //Extension relative to the frame in inches
-    double distance = ((-winchCoder.getPosition()*ArmConstants.ticksPerInch) - ArmConstants.BaseArmLength);
+    double distance = ((getCurrentLength()*ArmConstants.ticksPerInch) - ArmConstants.BaseArmLength);
     return winchExtension.getAverage(distance * Math.sin(pivotCoder.getAbsolutePosition() * Math.PI/180));
   }
 
-  public void grab (boolean grab) {
-    if(grab) {
-      grabberSolenoid.set(DoubleSolenoid.Value.kForward);
-    } else {
-      grabberSolenoid.set(DoubleSolenoid.Value.kReverse);
-    }
-  }
+  // public void grab (boolean grab) {
+  //   if(grab) {
+  //     grabberSolenoid.set(DoubleSolenoid.Value.kForward);
+  //   } else {
+  //     grabberSolenoid.set(DoubleSolenoid.Value.kReverse);
+  //   }
+  // }
 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("Compressor Enabled", RobotContainer.compressor.isEnabled());
-    SmartDashboard.putNumber("Winch Position", -winchCoder.getPosition());
+    // SmartDashboard.putBoolean("Compressor Enabled", RobotContainer.compressor.isEnabled());
+    SmartDashboard.putNumber("Winch Position", getCurrentLength());
     SmartDashboard.putBoolean("Is Using Limits", RobotContainer.enableLimits);
     SmartDashboard.putNumber("Pivot Angle", getCurrentAngle());
-    SmartDashboard.putNumber("Winch Height", getCurrentHeight());
-    SmartDashboard.putNumber("Winch Extension", getCurrentExtension());
+    // SmartDashboard.putNumber("Winch Height", getCurrentHeight());
+    // SmartDashboard.putNumber("Winch Extension", getCurrentExtension());
   }
 }

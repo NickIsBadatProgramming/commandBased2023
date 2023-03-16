@@ -202,6 +202,11 @@ public class SwerveGroup extends SubsystemBase {
 
       SmartDashboard.putNumber("NavX Angle", -navx.getYaw());
     }
+
+    RobotContainer.FL.updateMotorSpeeds();
+    RobotContainer.FR.updateMotorSpeeds();
+    RobotContainer.BL.updateMotorSpeeds();
+    RobotContainer.BR.updateMotorSpeeds();
   }
 
   public void DriveField(double vx, double vy, double vr) {
@@ -231,7 +236,10 @@ public class SwerveGroup extends SubsystemBase {
       BL.move(backLeftOptimized.speedMetersPerSecond, backLeftOptimized.angle.getDegrees());
       BR.move(backRightOptimized.speedMetersPerSecond, backRightOptimized.angle.getDegrees());
 
-
+      RobotContainer.FL.updateMotorSpeeds();
+      RobotContainer.FR.updateMotorSpeeds();
+      RobotContainer.BL.updateMotorSpeeds();
+      RobotContainer.BR.updateMotorSpeeds();
     }
   }
 
@@ -327,5 +335,6 @@ public class SwerveGroup extends SubsystemBase {
     SmartDashboard.putNumber("X Position", this.odometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Y Position", this.odometry.getPoseMeters().getY());
     SmartDashboard.putNumber("NavX Angle", -navx.getYaw());
+    SmartDashboard.putNumber("NavX Pitch", navx.getRoll());
   }
 }

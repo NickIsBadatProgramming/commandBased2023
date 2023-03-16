@@ -40,9 +40,6 @@ public class Grab extends CommandBase {
       extend = 0;
     }
 
-
-    RobotContainer.grabber.grab(RobotContainer.grip);
-
     RobotContainer.grabber.pivot(pivot);
     RobotContainer.grabber.winch(extend);
 

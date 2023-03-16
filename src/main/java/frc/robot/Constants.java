@@ -43,10 +43,10 @@ public final class Constants {
 
         //Swerve Zeroes
 
-        public static final double FR_Zero = 353;
-        public static final double FL_Zero = 172;
-        public static final double BL_Zero = 181;
-        public static final double BR_Zero = 219;
+        public static final double FR_Zero = 354.8;
+        public static final double FL_Zero = 168.6;
+        public static final double BL_Zero = 185.8;
+        public static final double BR_Zero = 224.9;
 
 
         //Autonomous Variables
@@ -83,9 +83,24 @@ public final class Constants {
         public static final double DistanceToCargoCenterTag = 2.32537;
         public static final double CargoCenterTagRecess = 0.665226;
 
-        public static final double limelightXOffset = 0.36;
-        public static final double limelightYOffset = 0.15;
-        public static final double limelightZOffset = 0.72; //Robot is .14m away from apriltag at this distance, any farther and it will clip out of frame
+        public static final double limelightXOffset = 0.37;
+        public static final double limelightYOffset = -0.18;
+        public static final double limelightZOffset = 1.07; //Robot is .14m away from apriltag at this distance, any farther and it will clip out of frame
+        public static final double limelightAZOffset = -0.6;
+
+        public static final double rampAngleEntryThreshhold = -9; //Once it becomes higher than this stop
+        public static final double rampAngleExitThreshhold = -9;
+        public static final double stopThreshhold = 10;
+
+        public static final double balanceKP = 0.08;
+        public static final double balanceKI = 0;
+        public static final double balanceKD = 0;
+        public static final double balanceTolerance = 3;
+
+        public static final double balanceMaxForwardPosition = 1.5;
+        public static final double balanceMaxReversePosition = 0.5;
+        public static final double balanceMaxForwardSpeed = 0.15;
+        public static final double balanceMaxReverseSpeed = -0.15;
         
 
 
@@ -103,7 +118,7 @@ public final class Constants {
         public static final double MaxArmPivotAngle = 160;
         public static final double MinArmPivotAngle = -160;
         public static final double PivotError = 5;
-        public static final double PivotOffset = 114.2;
+        public static final double PivotOffset = 118;
 
         //Dimensional constraints
         public static final double MaxArmHeight = 0; //All lengths in inches
@@ -120,6 +135,18 @@ public final class Constants {
         public static final double ticksPerInch = 0.01002619;
 
         public static final double slowZone = 0.45; //For the pivot
+
+
+        //For auto positional movement
+        public static final double pivotError = 10;
+        public static final double winchError = 10;
+        public static final double pivotMinSpeed = 0.10;
+        public static final double pivotAdditionalSpeed = 0.48;
+        public static final double winchMinSpeed = 0.17;
+        public static final double winchAdditionalSpeed = 0.4;
+
+        public static final double highCubeAngle = -60;
+        public static final double highCubeExtension = 4122;
 
 
         //The arm has about 32 inches of extension it can do at level before it goes beyond it's limts or 3191 units

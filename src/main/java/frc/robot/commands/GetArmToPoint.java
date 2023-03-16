@@ -4,43 +4,32 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class ToggleGrip extends CommandBase {
-  /** Creates a new ToggleGrip. */
-  public ToggleGrip() {
+public class GetArmToPoint extends CommandBase {
+
+  double angle;
+  double extension;
+  boolean isFinished;
+
+  /** Creates a new GetArmToPoint. */
+  public GetArmToPoint(double angle, double extension) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.grabber);
+    this.angle = angle;
+    this.extension = extension;
   }
-
-  boolean isFinished = false;
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    RobotContainer.grip = !RobotContainer.grip;
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(RobotContainer.grip) {
-      RobotContainer.grabber.grabberSolenoid.set(DoubleSolenoid.Value.kForward);
-    } else {
-      RobotContainer.grabber.grabberSolenoid.set(DoubleSolenoid.Value.kReverse);
-    }
-
-    if(RobotContainer.grip && RobotContainer.grabberSolenoid.get() == DoubleSolenoid.Value.kForward ) {
-      isFinished = true;
-    }
-
-    if(!RobotContainer.grip && RobotContainer.grabberSolenoid.get() == DoubleSolenoid.Value.kReverse ) {
-      isFinished = true;
-    }
-
-
+    isFinished = RobotContainer.grabber.getToPosition(angle, extension);
   }
 
   // Called once the command ends or is interrupted.

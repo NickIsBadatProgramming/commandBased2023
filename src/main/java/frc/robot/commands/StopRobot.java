@@ -5,37 +5,32 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 
-public class ZeroArm extends CommandBase {
-  WaitCommand wait;
-  /** Creates a new ZeroArm. */
-  public ZeroArm() {
+public class StopRobot extends CommandBase {
+  /** Creates a new StopRobot. */
+  public StopRobot() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.grabber);
+    addRequirements(RobotContainer.swerve);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    wait = new WaitCommand(2);
-    RobotContainer.winchCAN.setPosition(0);
-    // RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 1);
-    // wait.andThen(new InstantCommand(
-    //   () -> RobotContainer.xbox2.setRumble(RumbleType.kBothRumble, 0)
-    // ));
+    RobotContainer.swerve.Drive(0, 0, 0);
+    RobotContainer.FL.updateMotorSpeeds();
+    RobotContainer.FR.updateMotorSpeeds();
+    RobotContainer.BL.updateMotorSpeeds();
+    RobotContainer.BR.updateMotorSpeeds();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

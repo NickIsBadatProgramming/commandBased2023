@@ -37,6 +37,7 @@ public class Drive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.swerve.Drive(0, 0, 0);
 
   }
 
@@ -123,6 +124,7 @@ public class Drive extends CommandBase {
       rV = rV2;
       usingSecondary = true;
     }
+    
 
 
 
@@ -143,10 +145,11 @@ public class Drive extends CommandBase {
         RobotContainer.swerve.Drive(xV, yV, rV);
     }
 
-    RobotContainer.FL.updateMotorSpeeds();
-    RobotContainer.FR.updateMotorSpeeds();
-    RobotContainer.BL.updateMotorSpeeds();
-    RobotContainer.BR.updateMotorSpeeds();
+    if((xV == 0 && yV == 0 && rV == 0)) {
+      RobotContainer.swerve.Drive(0, 0, 0);
+    }
+
+
 
   }
 
