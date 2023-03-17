@@ -9,6 +9,7 @@ import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.StopRobot;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -33,6 +34,7 @@ public class Robot extends TimedRobot {
     RobotContainer.swerve.getNavX().zeroYaw();
     RobotContainer.swerve.resetOdometry();
     PathPlannerServer.startServer(5811);
+    new StopRobot().schedule();
   }
 
   /**
@@ -91,6 +93,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     RobotContainer.navx.zeroYaw();
+    RobotContainer.autoManager.cancel();
   }
 
   /** This function is called periodically during operator control. */

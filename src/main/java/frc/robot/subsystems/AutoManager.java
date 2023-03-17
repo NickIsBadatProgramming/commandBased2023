@@ -17,12 +17,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.BalanceOnRamp;
+import frc.robot.commands.Drive;
 import frc.robot.commands.GetArmToPoint;
 import frc.robot.commands.GetToRamp;
 import frc.robot.commands.StopRobot;
@@ -34,6 +36,7 @@ public class AutoManager extends SubsystemBase {
   SwerveAutoBuilder autoBuilder;
   SendableChooser<Integer> autoChooser;
   SendableChooser<Boolean> balanceChooser;
+  SequentialCommandGroup auto = new SequentialCommandGroup(new PrintCommand("Auto started"));
 
   public Command getToAprilTag(double tx, double tz, double az, boolean isTarget) {
 
@@ -58,12 +61,12 @@ public class AutoManager extends SubsystemBase {
     autoChooser.addOption("Preload Auto Middle", 2);
     autoChooser.addOption("Preload Auto Left", 3);
     autoChooser.setDefaultOption("No Auto", -1);
-    SmartDashboard.putData("Auto1", autoChooser);
+
 
     balanceChooser = new SendableChooser<Boolean>();
     balanceChooser.addOption("Balance", true);
     balanceChooser.setDefaultOption("Don't Balance", false);
-    SmartDashboard.putData("Balance1", balanceChooser);
+
     
     //Most of this code was taken from the PathPlanner wiki
 
@@ -73,14 +76,17 @@ public class AutoManager extends SubsystemBase {
 
 
     //Paths
-    ArrayList<PathPlannerTrajectory> aprilTag6Path = (ArrayList<PathPlannerTrajectory>)PathPlanner.loadPathGroup("aprilTag6", new PathConstraints(0.2, 0.2));
-    ArrayList<PathPlannerTrajectory> aprilTag7Path = (ArrayList<PathPlannerTrajectory>)PathPlanner.loadPathGroup("aprilTag7", new PathConstraints(0.2, 0.2));
-    ArrayList<PathPlannerTrajectory> aprilTag8Path = (ArrayList<PathPlannerTrajectory>)PathPlanner.loadPathGroup("aprilTag8", new PathConstraints(0.2, 0.2));
+    ArrayList<PathPlannerTrajectory> aprilTag6Path = (ArrayList<PathPlannerTrajectory>)PathPlanner.loadPathGroup("aprilTag6", new PathConstraints(0.5, 0.4));
+    ArrayList<PathPlannerTrajectory> aprilTag7Path = (ArrayList<PathPlannerTrajectory>)PathPlanner.loadPathGroup("aprilTag7", new PathConstraints(0.5, 0.4));
+    ArrayList<PathPlannerTrajectory> aprilTag8Path = (ArrayList<PathPlannerTrajectory>)PathPlanner.loadPathGroup("aprilTag8", new PathConstraints(0.5, 0.4));
 
     //Commands
     aprilTag6 = autoBuilder.fullAuto(aprilTag6Path);
     aprilTag7 = autoBuilder.fullAuto(aprilTag7Path);
     aprilTag8 = autoBuilder.fullAuto(aprilTag8Path);
+
+    SmartDashboard.putData("Balance", balanceChooser);
+    SmartDashboard.putData("Auto", autoChooser);
 
     System.out.println("Auto was built");
 
@@ -94,7 +100,7 @@ public class AutoManager extends SubsystemBase {
     // //return moveArm(ArmConstants.highCubeAngle, ArmConstants.highCubeExtension);
 
 
-    SequentialCommandGroup auto = new SequentialCommandGroup(new PrintCommand("Auto started"));
+    
 
 
     if(autoChooser.getSelected() != -1) {
@@ -134,6 +140,7 @@ public class AutoManager extends SubsystemBase {
 
       auto.addCommands(new GetToRamp());
       auto.addCommands(new BalanceOnRamp());
+
     }
 
     return auto;
@@ -144,10 +151,15 @@ public class AutoManager extends SubsystemBase {
     // return auto;
   }
 
+  public void cancel() {
+    auto.cancel();
+  }
+ 
 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
   }
 }

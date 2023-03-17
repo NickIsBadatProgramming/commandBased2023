@@ -31,7 +31,7 @@ public class GetToRamp extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.swerve.DriveField(0, -0.3, 0);
+    RobotContainer.swerve.DriveField(0, -0.15, 0);
     if(navx.getRoll() < AutonomousConstants.rampAngleEntryThreshhold) {
       hasCrossedThreshhold = true;
       RobotContainer.swerve.DriveField(0, 0, 0);
