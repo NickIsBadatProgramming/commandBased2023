@@ -88,8 +88,8 @@ public final class Constants {
         public static final double limelightZOffset = 1.07; //Robot is .14m away from apriltag at this distance, any farther and it will clip out of frame
         public static final double limelightAZOffset = -0.6;
 
-        public static final double rampAngleEntryThreshhold = 14; //Once it becomes higher than this stop
-        public static final double rampAngleExitThreshhold = 6;
+        public static final double rampAngleEntryThreshhold = 13; //Once it becomes higher than this stop
+        public static final double rampAngleExitThreshhold = 5;
         public static final double stopThreshhold = 10;
 
         public static final double balanceKP = 0.08;

@@ -31,8 +31,8 @@ public class GetToRamp extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.swerve.DriveField(0, -0.15, 0);
-    if(navx.getRoll() < AutonomousConstants.rampAngleEntryThreshhold) {
+    RobotContainer.swerve.DriveField(0, -0.25, 0);
+    if(navx.getRoll() > AutonomousConstants.rampAngleEntryThreshhold) {
       hasCrossedThreshhold = true;
       RobotContainer.swerve.DriveField(0, 0, 0);
     }
@@ -40,12 +40,14 @@ public class GetToRamp extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    RobotContainer.swerve.DriveField(0, 0, 0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(navx.getRoll() > AutonomousConstants.rampAngleExitThreshhold && hasCrossedThreshhold) {
+    if(navx.getRoll() < AutonomousConstants.rampAngleExitThreshhold && hasCrossedThreshhold) {
       return true;
     }
     return false;

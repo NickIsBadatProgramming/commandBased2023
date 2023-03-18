@@ -22,6 +22,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveConstants;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveGroup extends SubsystemBase {
@@ -76,12 +77,12 @@ public class SwerveGroup extends SubsystemBase {
 
 
     SwerveModulePosition[] swerveModulePositions = {FR.getModulePosition(), FL.getModulePosition(), BL.getModulePosition(), BR.getModulePosition()};
-    this.odometry = new SwerveDriveOdometry(kinematics, Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions);
+    this.odometry = new SwerveDriveOdometry(kinematics, Rotation2d.fromDegrees(getYaw()), swerveModulePositions);
 
 
   }
   public void DriveWithAngle(double vx, double vy, double angleX, double angleY) {
-    double navAngle = -navx.getYaw();
+    double navAngle = getYaw();
     if(navAngle < 0) {
       navAngle += 360;
     }
@@ -134,7 +135,7 @@ public class SwerveGroup extends SubsystemBase {
 
   public void DriveWithAngle(double vx, double vy, double angle) {
     
-    double navAngle = -navx.getYaw();
+    double navAngle = getYaw();
 
     if(navAngle < 0) {
       navAngle += 360;
@@ -200,7 +201,7 @@ public class SwerveGroup extends SubsystemBase {
       BL.move(backLeftOptimized.speedMetersPerSecond, backLeftOptimized.angle.getDegrees());
       BR.move(backRightOptimized.speedMetersPerSecond, backRightOptimized.angle.getDegrees());
 
-      SmartDashboard.putNumber("NavX Angle", -navx.getYaw());
+      SmartDashboard.putNumber("NavX Angle", getYaw());
     }
 
     RobotContainer.FL.updateMotorSpeeds();
@@ -216,7 +217,7 @@ public class SwerveGroup extends SubsystemBase {
       BR.move();
       BL.move();
     } else {
-      ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(vy, vx, vr, Rotation2d.fromDegrees(-navx.getYaw()));
+      ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(vy, vx, vr, Rotation2d.fromDegrees(getYaw()));
 
 
 
@@ -276,12 +277,12 @@ public class SwerveGroup extends SubsystemBase {
     BL.getModulePosition(true);
     BR.getModulePosition(true);
     SwerveModulePosition[] swerveModulePositions = {FR.getModulePosition(true), FL.getModulePosition(true), BL.getModulePosition(true), BR.getModulePosition(true)};
-    odometry.resetPosition(Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions, new Pose2d());
+    odometry.resetPosition(Rotation2d.fromDegrees(getYaw()), swerveModulePositions, new Pose2d());
   }
 
   public void resetOdometry(Pose2d pose) {
     SwerveModulePosition[] swerveModulePositions = {FR.getModulePosition(true), FL.getModulePosition(true), BL.getModulePosition(true), BR.getModulePosition(true)};
-    odometry.resetPosition(Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions, pose);
+    odometry.resetPosition(Rotation2d.fromDegrees(getYaw()), swerveModulePositions, pose);
   }
 
   public double getOdometryX() {
@@ -323,18 +324,25 @@ public class SwerveGroup extends SubsystemBase {
     SmartDashboard.putNumber("Calculated Controller Angle", angle);
   }
 
+  public double getYaw() {
+    if(DriverStation.isTeleop()) {
+      return -navx.getYaw() - 180;
+    }
+    return -navx.getYaw();
+  }
+
   @Override
   public void periodic() {
 
     SwerveModulePosition[] swerveModulePositions = {FR.getModulePosition(), FL.getModulePosition(), BL.getModulePosition(), BR.getModulePosition()};
 
 
-    this.odometry.update(Rotation2d.fromDegrees(-navx.getYaw()), swerveModulePositions);
+    this.odometry.update(Rotation2d.fromDegrees(getYaw()), swerveModulePositions);
     pose = this.odometry.getPoseMeters();
 
     SmartDashboard.putNumber("X Position", this.odometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Y Position", this.odometry.getPoseMeters().getY());
-    SmartDashboard.putNumber("NavX Angle", -navx.getYaw());
+    SmartDashboard.putNumber("NavX Angle", getYaw());
     SmartDashboard.putNumber("NavX Pitch", navx.getRoll());
   }
 }

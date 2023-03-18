@@ -59,7 +59,7 @@ public class BalanceOnRamp extends CommandBase {
     }
 
     SmartDashboard.putNumber("Balancer Drive Speed", driveSpeed);
-    RobotContainer.swerve.Drive(0, driveSpeed, 0);
+    RobotContainer.swerve.DriveField(0, driveSpeed, 0);
   }
 
   // Called once the command ends or is interrupted.

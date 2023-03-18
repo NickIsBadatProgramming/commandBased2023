@@ -17,13 +17,14 @@ public class ResetFeild extends CommandBase {
   /** Creates a new ResetFeild. */
   public ResetFeild() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.swerve);
+    // addRequirements(RobotContainer.swerve);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    navx = RobotContainer.swerve.getNavX();
+    navx = RobotContainer.navx;
+    // RobotContainer.swerve.DriveField(0, 0, 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,6 +40,6 @@ public class ResetFeild extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Math.abs(navx.getYaw())  <= 0.1);
+    return true;
   }
 }

@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.server.PathPlannerServer;
+// import com.pathplanner.lib.server.PathPlannerServer;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     RobotContainer.swerve.getNavX().zeroYaw();
     RobotContainer.swerve.resetOdometry();
-    PathPlannerServer.startServer(5811);
+    // PathPlannerServer.startServer(5811);
     new StopRobot().schedule();
   }
 
@@ -92,8 +92,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    RobotContainer.navx.zeroYaw();
-    RobotContainer.autoManager.cancel();
   }
 
   /** This function is called periodically during operator control. */
